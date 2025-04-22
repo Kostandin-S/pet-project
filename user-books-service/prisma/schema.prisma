@@ -1,0 +1,30 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum BookStatus {
+  NotStarted
+  InProgress
+  Completed
+}
+
+model UserBooks {
+  id          String        @id @default(uuid())
+  userId      String
+  bookId      String
+  status      BookStatus @default(NotStarted)
+  bookTitle   String
+  bookAuthor  String
+  rating      Int?
+  description String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@unique([userId, bookId])
+}

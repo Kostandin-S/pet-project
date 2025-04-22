@@ -1,0 +1,54 @@
+import errors from '../constants/errors';
+import { UserBooks } from '../generated/prisma';
+import * as userBooksDal from '../repositories/user-books.dal';
+import { AddUserBookRequestBody } from '../user-books.types';
+import {
+  Conflict,
+  NotFoundError,
+} from '../utils/errors';
+
+export const associateBookWithUser = async (
+  bookId: string,
+  userId: string,
+  reqBody: AddUserBookRequestBody
+): Promise<void> => {
+  const book = await userBooksDal.getUserBookById({
+    userId_bookId: { userId, bookId },
+  });
+
+  if (book) {
+    throw new Conflict(errors.BOOK_ALREADY_ASSIGNED);
+  }
+
+  await userBooksDal.addBookToUser({
+    userId,
+    bookId,
+    description: reqBody?.description,
+    rating: reqBody?.rating,
+    status: reqBody?.status,
+    bookTitle: reqBody.title,
+    bookAuthor: reqBody.author,
+  });
+};
+
+export const checkIfBookIsPartOfUsersCollection = async (
+  userId: string,
+  bookId: string
+) => {
+  const book = await userBooksDal.getUserBookById({
+    userId_bookId: { userId, bookId },
+  });
+
+  if (!book) throw new NotFoundError(errors.BOOK_NOT_FOUND);
+
+  return book;
+};
+
+export const formatUserBooks = (userBooks: UserBooks) => ({
+  id: userBooks.id,
+  title: userBooks.bookTitle,
+  author: userBooks.bookAuthor,
+  description: userBooks?.description,
+  rating: userBooks?.rating,
+  status: userBooks.status,
+});

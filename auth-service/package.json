@@ -1,0 +1,49 @@
+{
+  "name": "auth-service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint 'src/**/*.{js,ts}'",
+    "lint:fix": "eslint 'src/**/*.{js,ts}' --fix",
+    "db:migrate:dev": "dotenv -e .env.dev -- npx prisma migrate dev",
+    "dev": "NODE_ENV=dev nodemon src/server.ts",
+    "build": "rm -rf dist && npx tsc && npm run copy:prisma",
+    "copy:prisma": "cp -r src/generated dist/generated",
+    "start": "NODE_ENV=dev ts-node dist/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@prisma/client": "^6.6.0",
+    "@types/express-session": "^1.18.1",
+    "axios": "^1.8.4",
+    "bcryptjs": "^3.0.2",
+    "connect-pg-simple": "^10.0.0",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "express-session": "^1.18.1",
+    "jsonwebtoken": "^9.0.2",
+    "nodemon": "^3.1.9",
+    "winston": "^3.17.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.24.0",
+    "@types/connect-pg-simple": "^7.0.3",
+    "@types/dotenv": "^6.1.1",
+    "@types/express": "^5.0.1",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/node": "^22.14.0",
+    "depcheck": "^1.4.7",
+    "dotenv-cli": "^8.0.0",
+    "eslint": "^9.24.0",
+    "globals": "^16.0.0",
+    "prisma": "^6.6.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.29.1"
+  }
+}
