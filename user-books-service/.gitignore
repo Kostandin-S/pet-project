@@ -4,5 +4,6 @@ node_modules/
 # Build output
 dist/
 
-# Environment variables
+# Ignore all env files except example
 .env*
+!.env.example
