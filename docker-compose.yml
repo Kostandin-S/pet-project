@@ -38,7 +38,8 @@ services:
     ports:
       - "3003:3003"
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     env_file:
       - ./book-service/.env.staging
 
@@ -49,7 +50,8 @@ services:
     ports:
       - "3004:3004"
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     env_file:
       - ./user-books-service/.env.staging
 
@@ -60,7 +62,8 @@ services:
     ports:
       - "3005:3005"
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     env_file:
       - ./notification-service/.env.staging
 
@@ -68,8 +71,13 @@ services:
     image: rabbitmq:3-management
     container_name: rabbitmq
     ports:
-      - "5672:5672" # RabbitMQ message broker (used by services)
-      - "15672:15672" # RabbitMQ management UI
+      - "5672:5672"
+      - "15672:15672"
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
+    healthcheck:
+      test: ["CMD-SHELL", "rabbitmq-diagnostics -q ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10

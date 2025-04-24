@@ -17,9 +17,7 @@ export const consumeBookRecommendations = async (queue: string) => {
 
     try {
       await sendBookRecommendationsEmail(email, genres, books);
-      channel.ack(msg);
     } catch (error) {
-      channel.reject(msg, false);
       throw new InternalServerError(error);
     }
 
