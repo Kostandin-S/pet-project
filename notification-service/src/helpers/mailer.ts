@@ -32,7 +32,7 @@ export const sendBookRecommendationsEmail = async (
   const bookList = books.map((book, idx) => `${idx + 1}. ${book}`).join("\n");
 
   const mailOptions = {
-    from: '"BookMate 📚" <noreply@bookmate.com>',
+    from: "hello@demomailtrap.co",
     to,
     subject: `You've just finished a book! Here are more ${genre} recommendations`,
     text: `Hi there!\n\nSince you just finished a ${genre} book, here are a few more you might love:\n\n${bookList}\n\nHappy reading!\n- The BookMate Team`,
