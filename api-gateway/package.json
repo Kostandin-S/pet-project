@@ -23,9 +23,13 @@
     "ts-node": "^10.9.2"
   },
   "devDependencies": {
+    "@eslint/js": "^9.25.1",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^22.14.0",
     "depcheck": "^1.4.7",
-    "typescript": "^5.8.3"
+    "eslint": "^9.25.1",
+    "globals": "^16.0.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.31.0"
   }
 }
