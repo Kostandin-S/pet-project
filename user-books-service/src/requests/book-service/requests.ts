@@ -35,7 +35,7 @@ export const getBookById = async (params: GetBookByIdParams) => {
       headers: {
         Authorization: `Bearer ${generateToken()}`,
       },
-      url: `process.env.BOOK_SERVICE_URL/${params.bookId}`,
+      url: `${process.env.BOOK_SERVICE_URL}/${params.bookId}`,
     });
 
     return response.data;

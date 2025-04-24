@@ -1,11 +1,8 @@
-import errors from '../constants/errors';
-import { UserBooks } from '../generated/prisma';
-import * as userBooksDal from '../repositories/user-books.dal';
-import { AddUserBookRequestBody } from '../user-books.types';
-import {
-  Conflict,
-  NotFoundError,
-} from '../utils/errors';
+import errors from "../constants/errors";
+import { UserBooks } from "../generated/prisma";
+import * as userBooksDal from "../repositories/user-books.dal";
+import { AddUserBookRequestBody } from "../user-books.types";
+import { Conflict, NotFoundError } from "../utils/errors";
 
 export const associateBookWithUser = async (
   bookId: string,
@@ -44,11 +41,12 @@ export const checkIfBookIsPartOfUsersCollection = async (
   return book;
 };
 
-export const formatUserBooks = (userBooks: UserBooks) => ({
-  id: userBooks.id,
-  title: userBooks.bookTitle,
-  author: userBooks.bookAuthor,
-  description: userBooks?.description,
-  rating: userBooks?.rating,
-  status: userBooks.status,
+export const formatUserBooks = (userBook: UserBooks) => ({
+  id: userBook.id,
+  bookId: userBook.bookId,
+  title: userBook.bookTitle,
+  author: userBook.bookAuthor,
+  description: userBook?.description,
+  rating: userBook?.rating,
+  status: userBook.status,
 });
