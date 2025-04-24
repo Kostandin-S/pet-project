@@ -2,22 +2,23 @@ import {
   AddBookRequestBody,
   GetBookFilters,
   UpdateBookRequestBody,
-} from './books.types';
+} from "./books.types";
 import {
   validateAddBookRequestBody,
   validateUpdateBookRequestBody,
-} from './books.validator';
-import errors from './constants/errors';
-import { searchBookInGoogleBooks } from './external/google-books-api/requests/search-book-in-google-books';
+} from "./books.validator";
+import errors from "./constants/errors";
+import { searchBookInGoogleBooks } from "./external/google-books-api/requests/search-book-in-google-books";
 import {
   addNewBookToCollection,
   checkIfBookExistsById,
   checkIfBookExistsByTitleAndAuthor,
   formatBookGenresObject,
+  prepareBooksFilters,
   AddNewBookToCollectionParams,
-} from './helpers/books.helpers';
-import * as dal from './repositories/books.dal';
-import { NotFoundError } from './utils/errors';
+} from "./helpers/books.helpers";
+import * as dal from "./repositories/books.dal";
+import { NotFoundError } from "./utils/errors";
 
 export const addBook = async (reqBody: AddBookRequestBody) => {
   validateAddBookRequestBody(reqBody);
@@ -27,7 +28,7 @@ export const addBook = async (reqBody: AddBookRequestBody) => {
 };
 
 export const getBooks = async (filters: GetBookFilters) => {
-  const books = await dal.findManyBooks({ ...filters });
+  const books = await dal.findManyBooks({ ...prepareBooksFilters(filters) });
 
   if (!books.length && filters?.author && filters?.title) {
     const googleBooksResponse = await searchBookInGoogleBooks({

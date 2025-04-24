@@ -1,18 +1,20 @@
+import { BookStatus } from "./generated/prisma";
 import {
   associateBookWithUser,
   checkIfBookIsPartOfUsersCollection,
   formatUserBooks,
-} from './helpers/user-books.helpers';
-import * as userBooksDal from './repositories/user-books.dal';
-import { getBooks } from './requests/book-service/requests';
+} from "./helpers/user-books.helpers";
+import { publishBookRecommendations } from "./queues/publisher";
+import * as userBooksDal from "./repositories/user-books.dal";
+import { getBooks, getBookById } from "./requests/book-service/requests";
 import {
   AddUserBookRequestBody,
   UpdateUserBookRequestBody,
-} from './user-books.types';
+} from "./user-books.types";
 import {
   validateAddUserBookRequestBook,
   validateUpdateUserBookRequestBook,
-} from './user-books.validator';
+} from "./user-books.validator";
 
 export const addUserBook = async (
   requestBody: AddUserBookRequestBody,
@@ -44,6 +46,7 @@ export const getUserBookById = async (bookId: string, userId: string) => {
 export const updateUserBook = async (
   bookId: string,
   userId: string,
+  userEmail: string,
   requestBody: UpdateUserBookRequestBody
 ) => {
   await checkIfBookIsPartOfUsersCollection(userId, bookId);
@@ -57,6 +60,22 @@ export const updateUserBook = async (
       status: requestBody?.status,
     }
   );
+
+  if (requestBody?.status && requestBody?.status === BookStatus.Completed) {
+    const bookGenres = (await getBookById({ bookId })).genres;
+    const booksRecommendations = await getBooks({ genres: bookGenres });
+
+    const message = {
+      email: userEmail,
+      genres: bookGenres.join(", "),
+      books: booksRecommendations.map((book) => book.title),
+    };
+
+    await publishBookRecommendations(
+      process.env.QUEUE_BOOKS_RECOMMENDATIONS!,
+      message
+    );
+  }
 
   return formatUserBooks(updatedBook);
 };

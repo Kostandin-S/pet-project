@@ -1,4 +1,6 @@
+import { sendBookRecommendationsEmail } from "../helpers/mailer";
 import { getChannel } from "../messaging/rabbitmq";
+import { InternalServerError } from "../utils/errors";
 
 export const consumeBookRecommendations = async (queue: string) => {
   const channel = getChannel();
@@ -11,7 +13,13 @@ export const consumeBookRecommendations = async (queue: string) => {
 
     console.log("[Book Recommendations Consumer] Received:", data);
 
-    // TODO: Add logic here
+    const { email, genres, books } = data;
+
+    try {
+      await sendBookRecommendationsEmail(email, genres, books);
+    } catch (error) {
+      throw new InternalServerError(error);
+    }
 
     channel.ack(msg);
   });

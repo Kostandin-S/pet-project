@@ -1,17 +1,14 @@
-import express, { Application } from 'express';
-import dotenv from 'dotenv';
+import express, { Application } from "express";
+import dotenv from "dotenv";
 
-import errors from './constants/errors';
-import { logRoutes } from './helpers/log-routes';
-import {
-  connectRabbitMQ,
-  getChannel,
-} from './messaging/rabbitmq';
-import errorMiddleware from './middlewares/error.middleware';
-import { internalAuthn } from './middlewares/internal-authn.middleware';
-import { consumeBookUpdates } from './queues/consumer';
-import routes from './routes';
-import { InternalServerError } from './utils/errors';
+import errors from "./constants/errors";
+import { logRoutes } from "./helpers/log-routes";
+import { connectRabbitMQ, getChannel } from "./messaging/rabbitmq";
+import errorMiddleware from "./middlewares/error.middleware";
+import { internalAuthn } from "./middlewares/internal-authn.middleware";
+import { consumeBookUpdates } from "./queues/consumer";
+import routes from "./routes";
+import { InternalServerError } from "./utils/errors";
 
 dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 
@@ -20,7 +17,8 @@ if (
   !process.env.DATABASE_URL ||
   !process.env.JWT_SECRET ||
   !process.env.RABBITMQ_URL ||
-  !process.env.QUEUE_BOOK_UPDATED
+  !process.env.QUEUE_BOOK_UPDATED ||
+  !process.env.QUEUE_BOOKS_RECOMMENDATIONS
 ) {
   throw new InternalServerError(errors.ENV_VARS_MISSING);
 }

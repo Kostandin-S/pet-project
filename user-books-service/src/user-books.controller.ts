@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 import { HttpStatusCode } from "./enums/http-status-code";
-import { validateId } from "./helpers/validate-id";
+import { validateParam } from "./helpers/validate-id";
 import * as service from "./user-books.service";
 
 export const addUserBook = async (
@@ -10,7 +10,7 @@ export const addUserBook = async (
   next: NextFunction
 ) => {
   try {
-    const userId = validateId(req.headers["x-user-id"]);
+    const userId = validateParam(req.headers["x-user-id"]);
     const addedBook = await service.addUserBook(req.body, userId);
 
     res.status(HttpStatusCode.Created).json(addedBook);
@@ -25,7 +25,7 @@ export const getUserBooks = async (
   next: NextFunction
 ) => {
   try {
-    const userId = validateId(req.headers["x-user-id"]);
+    const userId = validateParam(req.headers["x-user-id"]);
     const booksCollection = await service.getUserBooks(userId);
 
     res.status(HttpStatusCode.OK).json(booksCollection);
@@ -40,8 +40,8 @@ export const getUserBookById = async (
   next: NextFunction
 ) => {
   try {
-    const bookId = validateId(req.params?.id);
-    const userId = validateId(req.headers["x-user-id"]);
+    const bookId = validateParam(req.params?.id);
+    const userId = validateParam(req.headers["x-user-id"]);
     const book = await service.getUserBookById(bookId, userId);
 
     res.status(HttpStatusCode.OK).json(book);
@@ -56,11 +56,13 @@ export const updateUserBook = async (
   next: NextFunction
 ) => {
   try {
-    const bookId = validateId(req.params?.id);
-    const userId = validateId(req.headers["x-user-id"]);
+    const bookId = validateParam(req.params?.id);
+    const userId = validateParam(req.headers["x-user-id"]);
+    const userEmail = validateParam(req.headers["x-user-email"]);
     const updatedUserBook = await service.updateUserBook(
       bookId,
       userId,
+      userEmail,
       req.body
     );
 
@@ -76,8 +78,8 @@ export const deleteUserBook = async (
   next: NextFunction
 ) => {
   try {
-    const bookId = validateId(req.params?.id);
-    const userId = validateId(req.headers["x-user-id"]);
+    const bookId = validateParam(req.params?.id);
+    const userId = validateParam(req.headers["x-user-id"]);
     const deletedUserBook = await service.deleteUserBook(bookId, userId);
 
     res.status(HttpStatusCode.OK).json(deletedUserBook);

@@ -10,8 +10,19 @@ export type Book = {
 };
 
 export type GetBookParams = {
-  author: string;
-  title: string;
+  author?: string;
+  title?: string;
+  genres?: string[];
+};
+
+export type GetBookQueryParams = {
+  author?: string;
+  title?: string;
+  genres?: string;
+};
+
+export type GetBookByIdParams = {
+  bookId: string;
 };
 
 export type GenericError = {

@@ -1,7 +1,4 @@
-import {
-  Book,
-  Genre,
-} from './generated/prisma/client';
+import { Book, Genre } from "./generated/prisma/client";
 
 export type AddBookRequestBody = {
   title: string;
@@ -18,7 +15,9 @@ export type UpdateBookRequestBody = {
   isbn?: string;
 };
 
-export type GetBookFilters = Partial<Omit<Book, "createdAt" | "updatedAt">>;
+export type GetBookFilters = Partial<Omit<Book, "createdAt" | "updatedAt">> & {
+  genres?: string;
+};
 
 export type BookWithGenres = Book & {
   genres: Array<{

@@ -1,15 +1,12 @@
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 
-import { BookWithGenres } from '../books.types';
-import errors from '../constants/errors';
-import * as bookGenresDal from '../repositories/book-genres.dal';
-import * as booksDal from '../repositories/books.dal';
-import * as genresDal from '../repositories/genres.dal';
-import {
-  Conflict,
-  InternalServerError,
-  NotFoundError,
-} from '../utils/errors';
+import { BookWithGenres, GetBookFilters } from "../books.types";
+import errors from "../constants/errors";
+import { Prisma } from "../generated/prisma";
+import * as bookGenresDal from "../repositories/book-genres.dal";
+import * as booksDal from "../repositories/books.dal";
+import * as genresDal from "../repositories/genres.dal";
+import { Conflict, InternalServerError, NotFoundError } from "../utils/errors";
 
 export const checkIfBookExistsById = async (id: string) => {
   const book = await booksDal.findUniqueBook({ id });
@@ -90,4 +87,32 @@ export const addNewBookToCollection = async (
   }
 
   return formatBookGenresObject(book);
+};
+
+export const prepareBooksFilters = (
+  filters: GetBookFilters
+): Prisma.BookWhereInput => {
+  const { genres, ...filterWithoutGenre } = filters;
+
+  if (genres) {
+    const genreList = genres
+      .split(",")
+      .map((g) => g.trim())
+      .filter(Boolean);
+
+    return {
+      ...filters,
+      genres: {
+        some: {
+          genre: {
+            name: {
+              in: genreList,
+            },
+          },
+        },
+      },
+    };
+  }
+
+  return filterWithoutGenre;
 };
