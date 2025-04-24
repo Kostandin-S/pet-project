@@ -9,6 +9,7 @@ services:
       - auth-service
       - user-service
       - book-service
+      - user-books-service
     env_file:
       - ./api-gateway/.env.staging
 
@@ -51,6 +52,17 @@ services:
       - rabbitmq
     env_file:
       - ./user-books-service/.env.staging
+
+  notification-service:
+    build:
+      context: ./notification-service
+    container_name: notification-service
+    ports:
+      - "3005:3005"
+    depends_on:
+      - rabbitmq
+    env_file:
+      - ./notification-service/.env.staging
 
   rabbitmq:
     image: rabbitmq:3-management
