@@ -20,18 +20,22 @@ export const validateSession = async (
   }
 
   try {
-    const response: AxiosResponse<{ userId: string; isAdmin: boolean }> =
-      await axios({
-        method: HttpMethod.GET,
-        headers: {
-          Authorization: `Bearer ${generateToken()}`,
-          Cookie: cookie,
-        },
-        url: `${envVars.AUTH_SERVICE_URL}/session-validation`,
-      });
+    const response: AxiosResponse<{
+      userId: string;
+      isAdmin: boolean;
+      email: string;
+    }> = await axios({
+      method: HttpMethod.GET,
+      headers: {
+        Authorization: `Bearer ${generateToken()}`,
+        Cookie: cookie,
+      },
+      url: `${envVars.AUTH_SERVICE_URL}/session-validation`,
+    });
 
     req.headers["x-user-id"] = response.data.userId;
     req.headers["x-user-role"] = response.data.isAdmin ? "admin" : "user";
+    req.headers["x-user-email"] = response.data.email;
 
     next();
   } catch (e) {

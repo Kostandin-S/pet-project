@@ -60,7 +60,7 @@ export const validateSession = async (
 
     res
       .status(HttpStatusCode.OK)
-      .send({ userId: user.id, isAdmin: user.isAdmin });
+      .send({ userId: user.id, isAdmin: user.isAdmin, email: user.email });
   } catch (e) {
     next(e);
   }

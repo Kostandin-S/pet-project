@@ -1,11 +1,11 @@
-import express from 'express';
-import { createProxyMiddleware } from 'http-proxy-middleware';
-import dotenv from 'dotenv';
+import express from "express";
+import { createProxyMiddleware } from "http-proxy-middleware";
+import dotenv from "dotenv";
 
-import envVars from './constants/env-vars';
-import routes from './constants/routes';
-import { setHeadersObject } from './helpers/set-headers-object';
-import { validateSession } from './middlewares/validate-session.middleware';
+import envVars from "./constants/env-vars";
+import routes from "./constants/routes";
+import { setHeadersObject } from "./helpers/set-headers-object";
+import { validateSession } from "./middlewares/validate-session.middleware";
 
 dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 
