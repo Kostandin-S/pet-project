@@ -1,27 +1,12 @@
 import express, { Application } from "express";
-import dotenv from "dotenv";
 
-import errors from "./constants/errors";
+import envVars from "./constants/env-vars";
 import { logRoutes } from "./helpers/log-routes";
 import { connectRabbitMQ, getChannel } from "./messaging/rabbitmq";
 import errorMiddleware from "./middlewares/error.middleware";
 import { internalAuthn } from "./middlewares/internal-authn.middleware";
 import { consumeBookUpdates } from "./queues/consumer";
 import routes from "./routes";
-import { InternalServerError } from "./utils/errors";
-
-dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
-
-if (
-  !process.env.PORT ||
-  !process.env.DATABASE_URL ||
-  !process.env.JWT_SECRET ||
-  !process.env.RABBITMQ_URL ||
-  !process.env.QUEUE_BOOK_UPDATED ||
-  !process.env.QUEUE_BOOKS_RECOMMENDATIONS
-) {
-  throw new InternalServerError(errors.ENV_VARS_MISSING);
-}
 
 const app: Application = express();
 
@@ -37,16 +22,14 @@ app.use(errorMiddleware);
 logRoutes(routes.stack);
 
 const startServer = async () => {
-  app.listen(process.env.PORT, () => {
-    console.log(
-      `User-Books service is up and running on port ${process.env.PORT}`
-    );
+  app.listen(envVars.PORT, () => {
+    console.log(`User-Books service is up and running on port ${envVars.PORT}`);
   });
 
-  await connectRabbitMQ(process.env.RABBITMQ_URL!);
+  await connectRabbitMQ(envVars.RABBITMQ_URL!);
   console.log("RabbitMQ connected and ready to consume");
 
-  await consumeBookUpdates(process.env.QUEUE_BOOK_UPDATED!);
+  await consumeBookUpdates(envVars.QUEUE_BOOK_UPDATED!);
 };
 
 startServer();

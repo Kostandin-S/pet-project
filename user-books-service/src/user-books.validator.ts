@@ -1,28 +1,28 @@
-import { z } from 'zod';
+import { z } from "zod";
 
-import errors from './constants/errors';
-import { BookStatus } from './generated/prisma/client';
-import { formatZodErrors } from './helpers/format-zod-errors';
+import { ErrorMessages } from "./constants/errors";
+import { BookStatus } from "./generated/prisma/client";
+import { formatZodErrors } from "./helpers/format-zod-errors";
 import {
   AddUserBookRequestBody,
   UpdateUserBookRequestBody,
-} from './user-books.types';
-import { BadRequest } from './utils/errors';
+} from "./user-books.types";
+import { BadRequest } from "./utils/errors";
 
 export const validateAddUserBookRequestBook = (
   requestBody: AddUserBookRequestBody
 ) => {
   const schema = z.object({
-    title: z.string().min(2, { message: errors.TITLE_REQUIRED }),
-    author: z.string().min(3, { message: errors.AUTHOR_REQUIRED }),
+    title: z.string().min(2, { message: ErrorMessages.TITLE_REQUIRED }),
+    author: z.string().min(3, { message: ErrorMessages.AUTHOR_REQUIRED }),
     rating: z
       .number()
-      .min(1, { message: errors.MIN_RATING })
-      .max(5, { message: errors.MAX_RATING })
+      .min(1, { message: ErrorMessages.MIN_RATING })
+      .max(5, { message: ErrorMessages.MAX_RATING })
       .optional(),
     description: z
       .string()
-      .min(10, { message: errors.DESC_TOO_SHORT })
+      .min(10, { message: ErrorMessages.DESC_TOO_SHORT })
       .optional(),
     status: z
       .enum([
@@ -49,12 +49,12 @@ export const validateUpdateUserBookRequestBook = (
   const schema = z.object({
     rating: z
       .number()
-      .min(1, { message: errors.MIN_RATING })
-      .max(5, { message: errors.MAX_RATING })
+      .min(1, { message: ErrorMessages.MIN_RATING })
+      .max(5, { message: ErrorMessages.MAX_RATING })
       .optional(),
     description: z
       .string()
-      .min(10, { message: errors.DESC_TOO_SHORT })
+      .min(10, { message: ErrorMessages.DESC_TOO_SHORT })
       .optional(),
     status: z
       .enum([

@@ -1,3 +1,4 @@
+import envVars from "./constants/env-vars";
 import { BookStatus } from "./generated/prisma";
 import {
   associateBookWithUser,
@@ -72,7 +73,7 @@ export const updateUserBook = async (
     };
 
     await publishBookRecommendations(
-      process.env.QUEUE_BOOKS_RECOMMENDATIONS!,
+      envVars.QUEUE_BOOKS_RECOMMENDATIONS!,
       message
     );
   }

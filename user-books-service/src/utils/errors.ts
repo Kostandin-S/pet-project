@@ -1,6 +1,6 @@
-import Util from 'util';
+import Util from "util";
 
-import { HttpStatusCode } from '../enums/http-status-code';
+import { HttpStatusCode } from "../enums/http-status-code";
 
 export class BaseError extends Error {
   public readonly name: string;
@@ -120,17 +120,6 @@ export class NotAuthorized extends BaseError {
       HttpStatusCode.Forbidden,
       "Unauthorized",
       "You do not have permission to perform this action",
-      details
-    );
-  }
-}
-
-export class GeminiError extends BaseError {
-  constructor(details: unknown) {
-    super(
-      HttpStatusCode.InternalServerError,
-      "Gemini Error",
-      "Operation cannot be completed due to a problem",
       details
     );
   }

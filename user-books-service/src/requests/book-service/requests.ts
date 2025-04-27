@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 
+import envVars from "../../constants/env-vars";
 import { HttpMethod } from "../../enums/http-methods";
 import { internalErrorHandlers } from "../../helpers/internal-errors-handler";
 import { generateToken } from "../../helpers/jwt.helper";
@@ -15,7 +16,7 @@ export const getBooks = async (params: GetBookParams) => {
       headers: {
         Authorization: `Bearer ${generateToken()}`,
       },
-      url: process.env.BOOK_SERVICE_URL,
+      url: envVars.BOOK_SERVICE_URL,
       params: queryParams,
     });
 
@@ -35,7 +36,7 @@ export const getBookById = async (params: GetBookByIdParams) => {
       headers: {
         Authorization: `Bearer ${generateToken()}`,
       },
-      url: `${process.env.BOOK_SERVICE_URL}/${params.bookId}`,
+      url: `${envVars.BOOK_SERVICE_URL}/${params.bookId}`,
     });
 
     return response.data;
