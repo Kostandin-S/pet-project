@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-import errors from "../constants/errors";
+import { ErrorMessages } from "../constants/errors";
 import { decodeToken } from "../helpers/jwt.helper";
 import { NotAuthenticated } from "../utils/errors";
 
@@ -20,7 +20,7 @@ export const internalAuthn = async (
   const token = extractTokenFromHeader(req);
 
   if (!token) {
-    next(new NotAuthenticated(errors.NO_TOKEN_PROVIDED));
+    next(new NotAuthenticated(ErrorMessages.NO_TOKEN_PROVIDED));
     return;
   }
 

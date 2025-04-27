@@ -3,10 +3,10 @@ import {
   PrismaClientKnownRequestError,
   PrismaClientRustPanicError,
   PrismaClientUnknownRequestError,
-} from '@prisma/client/runtime/library';
+} from "@prisma/client/runtime/library";
+import { HttpStatusCode } from "axios";
 
-import { HttpStatusCode } from '../enums/http-status-code';
-import { PrismaErrorCode } from '../enums/prisma-error-code';
+import { PrismaErrorCode } from "../enums/prisma-error-code";
 
 export function preparePrismaError(error: unknown) {
   if (error instanceof PrismaClientKnownRequestError) {

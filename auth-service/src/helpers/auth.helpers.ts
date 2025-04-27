@@ -1,6 +1,6 @@
 import bcryptjs from "bcryptjs";
 
-import errors from "../constants/errors";
+import { ErrorMessages } from "../constants/errors";
 import { User } from "../generated/prisma";
 import * as userDal from "../repository/users.dal";
 import { Profile } from "../requests/user-service/types";
@@ -10,7 +10,7 @@ export const checkIfUserExistsByEmail = async (email: string) => {
   const user = await userDal.findUniqueUser({ email });
 
   if (!user) {
-    throw new NotAuthenticated(errors.INVALID_CREDENTIALS);
+    throw new NotAuthenticated(ErrorMessages.INVALID_CREDENTIALS);
   }
 
   return user;
@@ -22,7 +22,7 @@ export const checkIfEmailAlreadyExists = async (email: string) => {
   });
 
   if (emailExists) {
-    throw new UnprocessableEntity(errors.DUPLICATE_EMAIL);
+    throw new UnprocessableEntity(ErrorMessages.DUPLICATE_EMAIL);
   }
 };
 
@@ -38,7 +38,7 @@ export const checkIfPasswordsMatch = async (
   const passwordsMatch = await bcryptjs.compare(providedPassword, userPassword);
 
   if (!passwordsMatch) {
-    throw new NotAuthenticated(errors.INVALID_CREDENTIALS);
+    throw new NotAuthenticated(ErrorMessages.INVALID_CREDENTIALS);
   }
 };
 
@@ -61,7 +61,7 @@ export const checkIfUserExists = async (id: string) => {
   const user = await userDal.findUniqueUser({ id });
 
   if (!user) {
-    throw new NotAuthenticated(errors.INVALID_SESSION);
+    throw new NotAuthenticated(ErrorMessages.INVALID_SESSION);
   }
 
   return user;

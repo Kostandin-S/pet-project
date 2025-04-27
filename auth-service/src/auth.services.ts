@@ -10,7 +10,7 @@ import {
   validateRegisterUserRequest,
   validateUserLoginRequest,
 } from "./auth.validator";
-import errors from "./constants/errors";
+import { ErrorMessages } from "./constants/errors";
 import {
   checkIfEmailAlreadyExists,
   checkIfPasswordsMatch,
@@ -71,13 +71,13 @@ export const logoutUser = async (req: Request) =>
 
 export const validateSession = async (req: Request) => {
   if (!req.session || !req.session?.userId) {
-    throw new NotAuthenticated(errors.INVALID_SESSION);
+    throw new NotAuthenticated(ErrorMessages.INVALID_SESSION);
   }
 
   const user = await checkIfUserExists(req.session.userId);
 
   if (user.isAdmin !== req.session?.isAdmin) {
-    throw new NotAuthenticated(errors.INVALID_SESSION);
+    throw new NotAuthenticated(ErrorMessages.INVALID_SESSION);
   }
 
   return user;
