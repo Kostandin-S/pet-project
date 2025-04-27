@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { Application, Request, Response } from "express";
 import { HttpStatusCode } from "axios";
 
 import logger from "./config/logger";
@@ -7,7 +7,7 @@ import { RouterPaths } from "./constants/routes";
 import { errorMiddleware } from "./middlewares/error.middleware";
 import proxyRouter from "./proxyRouter";
 
-const app = express();
+const app: Application = express();
 
 app.use(express.urlencoded({ extended: true }));
 

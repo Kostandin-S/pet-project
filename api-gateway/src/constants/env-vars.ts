@@ -5,13 +5,13 @@ import { ErrorMessages } from "./errors";
 
 dotenv.config({ path: `.env.${process.env.NODE_ENV || "dev"}` });
 
-function getEnvVar(key: string): string {
+const getEnvVar = (key: string): string => {
   const value = process.env[key];
   if (!value) {
     throw new InternalServerError(`${ErrorMessages.ENV_VARS_MISSING}: ${key}`);
   }
   return value;
-}
+};
 
 const envVars = {
   PORT: getEnvVar("PORT"),
