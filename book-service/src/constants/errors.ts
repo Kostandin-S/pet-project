@@ -1,10 +1,6 @@
-export default {
+export const ErrorMessages = {
   TITLE_REQUIRED: "Title is a required field",
   AUTHOR_REQUIRED: "Author name is required",
-  BOOK_ALREADY_ASSIGNED: "You already have this book to your collection",
-  MIN_RATING: "Rating must be at least 1",
-  MAX_RATING: "Rating must be at most 5",
-  DESC_TOO_SHORT: "Description must be at least 10 characters",
   BOOK_NOT_FOUND: "Book with the provided ID was not found",
   BOOK_ALREADY_EXISTS: "Book already exists",
   INVALID_ISBN_FORMAT:

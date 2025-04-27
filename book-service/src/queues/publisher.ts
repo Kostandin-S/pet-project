@@ -1,5 +1,5 @@
-import { BookUpdatedMessage } from '../books.types';
-import { getChannel } from '../messaging/rabbitmq';
+import { BookUpdatedMessage } from "../books.types";
+import { getChannel } from "../messaging/rabbitmq";
 
 export const publishBookUpdate = async (
   queue: string,

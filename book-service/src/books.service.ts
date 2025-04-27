@@ -7,7 +7,7 @@ import {
   validateAddBookRequestBody,
   validateUpdateBookRequestBody,
 } from "./books.validator";
-import errors from "./constants/errors";
+import { ErrorMessages } from "./constants/errors";
 import { searchBookInGoogleBooks } from "./external/google-books-api/requests/search-book-in-google-books";
 import {
   addNewBookToCollection,
@@ -37,7 +37,7 @@ export const getBooks = async (filters: GetBookFilters) => {
     });
 
     if (!googleBooksResponse || googleBooksResponse?.totalItems === 0) {
-      throw new NotFoundError(errors.BOOK_NOT_FOUND_IN_OUR_LIBRARY);
+      throw new NotFoundError(ErrorMessages.BOOK_NOT_FOUND_IN_OUR_LIBRARY);
     }
 
     const volumeInfo = googleBooksResponse.items[0].volumeInfo;

@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { AddBookRequestBody, UpdateBookRequestBody } from "./books.types";
-import errors from "./constants/errors";
+import { ErrorMessages } from "./constants/errors";
 import { formatZodErrors } from "./helpers/format-zod-errors";
 import { BadRequest } from "./utils/errors";
 
@@ -10,13 +10,13 @@ const isbn13Regex = /^\d{13}$/;
 
 export const validateAddBookRequestBody = (requestBody: AddBookRequestBody) => {
   const schema = z.object({
-    title: z.string().min(3, { message: errors.TITLE_REQUIRED }),
-    author: z.string().min(3, { message: errors.AUTHOR_REQUIRED }),
+    title: z.string().min(3, { message: ErrorMessages.TITLE_REQUIRED }),
+    author: z.string().min(3, { message: ErrorMessages.AUTHOR_REQUIRED }),
     publishedDate: z.string().optional(),
     isbn: z
       .string()
       .refine((value) => isbn10Regex.test(value) || isbn13Regex.test(value), {
-        message: errors.INVALID_ISBN_FORMAT,
+        message: ErrorMessages.INVALID_ISBN_FORMAT,
       })
       .optional(),
     genres: z.array(z.string()),
@@ -36,13 +36,19 @@ export const validateUpdateBookRequestBody = (
   requestBody: UpdateBookRequestBody
 ) => {
   const schema = z.object({
-    title: z.string().min(3, { message: errors.TITLE_REQUIRED }).optional(),
-    author: z.string().min(3, { message: errors.AUTHOR_REQUIRED }).optional(),
+    title: z
+      .string()
+      .min(3, { message: ErrorMessages.TITLE_REQUIRED })
+      .optional(),
+    author: z
+      .string()
+      .min(3, { message: ErrorMessages.AUTHOR_REQUIRED })
+      .optional(),
     publishedDate: z.string().optional(),
     isbn: z
       .string()
       .refine((value) => isbn10Regex.test(value) || isbn13Regex.test(value), {
-        message: errors.INVALID_ISBN_FORMAT,
+        message: ErrorMessages.INVALID_ISBN_FORMAT,
       })
       .optional(),
   });

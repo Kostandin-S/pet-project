@@ -1,13 +1,9 @@
-import {
-  NextFunction,
-  Request,
-  Response,
-} from 'express';
+import { NextFunction, Request, Response } from "express";
+import { HttpStatusCode } from "axios";
 
-import * as service from './books.service';
-import { HttpStatusCode } from './enums/http-status-code';
-import { validateId } from './helpers/validate-id';
-import { publishBookUpdate } from './queues/publisher';
+import * as service from "./books.service";
+import { validateId } from "./helpers/validate-id";
+import { publishBookUpdate } from "./queues/publisher";
 
 export const addBook = async (
   req: Request,
@@ -31,7 +27,7 @@ export const getBooks = async (
   try {
     const books = await service.getBooks(req.query);
 
-    res.status(HttpStatusCode.OK).json(books);
+    res.status(HttpStatusCode.Ok).json(books);
   } catch (error) {
     next(error);
   }
@@ -46,7 +42,7 @@ export const getBookById = async (
     const bookId = validateId(req.params?.id);
     const book = await service.getBookById(bookId);
 
-    res.status(HttpStatusCode.OK).json(book);
+    res.status(HttpStatusCode.Ok).json(book);
   } catch (error) {
     next(error);
   }
@@ -69,7 +65,7 @@ export const updateBook = async (
       });
     }
 
-    res.status(HttpStatusCode.OK).json(updatedBook);
+    res.status(HttpStatusCode.Ok).json(updatedBook);
   } catch (error) {
     next(error);
   }
@@ -84,7 +80,7 @@ export const deleteBook = async (
     const bookId = validateId(req.params?.id);
     const deletedBook = await service.deleteBook(bookId);
 
-    res.status(HttpStatusCode.OK).json(deletedBook);
+    res.status(HttpStatusCode.Ok).json(deletedBook);
   } catch (error) {
     next(error);
   }

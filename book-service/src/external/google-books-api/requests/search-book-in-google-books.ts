@@ -1,8 +1,8 @@
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosResponse } from "axios";
 
-import { HttpMethod } from '../../../enums/http-methods';
-import { InternalServerError } from '../../../utils/errors';
-import { GoogleBooksApiResponse } from '../types';
+import { HttpMethod } from "../../../enums/http-methods";
+import { InternalServerError } from "../../../utils/errors";
+import { GoogleBooksApiResponse } from "../types";
 
 type Params = {
   title: string;
