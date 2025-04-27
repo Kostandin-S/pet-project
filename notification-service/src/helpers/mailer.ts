@@ -2,28 +2,19 @@ import nodemailer from "nodemailer";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
 
 import envVars from "../constants/env-vars";
-import errors from "../constants/errors";
-import { InternalServerError } from "../utils/errors";
-
-if (
-  !envVars.MAILTRAP_HOST ||
-  !envVars.MAILTRAP_PORT ||
-  !envVars.MAILTRAP_USER ||
-  !envVars.MAILTRAP_PASS
-) {
-  throw new InternalServerError(errors.ENV_VARS_MISSING);
-}
 
 const transporter = nodemailer.createTransport({
-  host: process.env.MAILTRAP_HOST,
-  port: process.env.MAILTRAP_PORT,
+  host: envVars.MAILTRAP_HOST,
+  port: Number(envVars.MAILTRAP_PORT),
   secure: false,
   auth: {
-    user: process.env.MAILTRAP_USER,
-    pass: process.env.MAILTRAP_PASS,
+    user: envVars.MAILTRAP_USER,
+    pass: envVars.MAILTRAP_PASS,
   },
 } as SMTPTransport.Options);
 
+// TODO: Improve this function
+// TODO: Make it fancy with HTML and CSS
 export const sendBookRecommendationsEmail = async (
   to: string,
   genre: string,

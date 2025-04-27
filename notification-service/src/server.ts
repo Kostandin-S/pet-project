@@ -1,37 +1,29 @@
-import express, { Request, Response } from "express";
+import express, { Application, Request, Response } from "express";
 
 import envVars from "./constants/env-vars";
-import errors from "./constants/errors";
 import { HttpStatusCode } from "./enums/http-status-code";
 import { connectRabbitMQ, getChannel } from "./messaging/rabbitmq";
 import { consumeBookRecommendations } from "./queues/consumer";
-import { InternalServerError } from "./utils/errors";
 
-if (
-  !envVars.PORT ||
-  !envVars.JWT_SECRET ||
-  !envVars.QUEUE_BOOKS_RECOMMENDATIONS ||
-  !envVars.RABBITMQ_URL
-) {
-  throw new InternalServerError(errors.ENV_VARS_MISSING);
-}
-
-const app = express();
+const app: Application = express();
 
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/health", (_req: Request, res: Response) => {
-  res.sendStatus(HttpStatusCode.OK);
+  res.status(HttpStatusCode.OK).json({
+    service: "Notification",
+    status: HttpStatusCode.OK,
+  });
 });
 
 const startServer = async () => {
-  app.listen(process.env.PORT, () => {
+  app.listen(envVars.PORT, () => {
     console.log(
-      `Notification service is up and running on port ${process.env.PORT}`
+      `Notification service is up and running on port ${envVars.PORT}`
     );
   });
 
-  await connectRabbitMQ(process.env.RABBITMQ_URL!);
+  await connectRabbitMQ(envVars.RABBITMQ_URL!);
   console.log("RabbitMQ connected and ready to consume");
 
   await consumeBookRecommendations(envVars.QUEUE_BOOKS_RECOMMENDATIONS!);
@@ -39,6 +31,7 @@ const startServer = async () => {
 
 startServer();
 
+// TODO: Improve server.ts
 process.on("SIGINT", async () => {
   console.log("Shutting down...");
   const channel = getChannel();
