@@ -1,7 +1,7 @@
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
 
-import { InternalServerError } from "../utils/errors";
-import { ErrorMessages } from "./errors";
+import { InternalServerError } from '../utils/errors';
+import { ErrorMessages } from './errors';
 
 dotenv.config({ path: `.env.${process.env.NODE_ENV || "dev"}` });
 
@@ -19,6 +19,8 @@ const envVars = {
   DATABASE_URL: getEnvVar("DATABASE_URL"),
   JWT_SECRET: getEnvVar("JWT_SECRET"),
   USER_SERVICE_URL: getEnvVar("USER_SERVICE_URL"),
+  RABBITMQ_URL: getEnvVar("RABBITMQ_URL"),
+  QUEUE_USER_DELETED: getEnvVar("QUEUE_USER_DELETED"),
 } as const;
 
 export default envVars;

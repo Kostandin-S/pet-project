@@ -10,6 +10,7 @@ import { internalAuthn } from './middlewares/internal-authn.middleware';
 import {
   consumeBookDelete,
   consumeBookUpdates,
+  consumeUserDelete,
 } from './queues/consumer';
 import routes from './routes';
 
@@ -36,7 +37,7 @@ const startServer = async () => {
       );
     });
 
-    await connectRabbitMQ(envVars.RABBITMQ_URL!);
+    await connectRabbitMQ(envVars.RABBITMQ_URL);
     logger.info("RabbitMQ connected and ready to consume");
 
     await consumeBookUpdates(envVars.QUEUE_BOOK_UPDATED);
@@ -44,6 +45,9 @@ const startServer = async () => {
 
     await consumeBookDelete(envVars.QUEUE_BOOK_DELETED);
     logger.info("RabbitMQ connected and ready to act upon book delete event");
+
+    await consumeUserDelete(envVars.QUEUE_USER_DELETED);
+    logger.info("RabbitMQ connected and ready to act upon user delete event");
   } catch (error) {
     logger.error("Error starting server or connecting to RabbitMQ:", error);
     process.exit(1);
