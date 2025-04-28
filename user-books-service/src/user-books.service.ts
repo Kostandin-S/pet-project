@@ -1,21 +1,25 @@
-import envVars from "./constants/env-vars";
-import { BookStatus } from "./generated/prisma";
+import envVars from './constants/env-vars';
+import { BookStatus } from './generated/prisma';
 import {
   associateBookWithUser,
   checkIfBookIsPartOfUsersCollection,
   formatUserBooks,
-} from "./helpers/user-books.helpers";
-import { publishBookRecommendations } from "./queues/publisher";
-import * as userBooksDal from "./repositories/user-books.dal";
-import { getBooks, getBookById } from "./requests/book-service/requests";
+} from './helpers/user-books.helpers';
+import { publishBookRecommendations } from './queues/publisher';
+import * as userBooksDal from './repositories/user-books.dal';
+import {
+  getBooks,
+  getBookById,
+  getBookRecommendations,
+} from './requests/book-service/requests';
 import {
   AddUserBookRequestBody,
   UpdateUserBookRequestBody,
-} from "./user-books.types";
+} from './user-books.types';
 import {
   validateAddUserBookRequestBook,
   validateUpdateUserBookRequestBook,
-} from "./user-books.validator";
+} from './user-books.validator';
 
 export const addUserBook = async (
   requestBody: AddUserBookRequestBody,
@@ -64,18 +68,22 @@ export const updateUserBook = async (
 
   if (requestBody?.status && requestBody?.status === BookStatus.Completed) {
     const bookGenres = (await getBookById({ bookId })).genres;
-    const booksRecommendations = await getBooks({ genres: bookGenres });
+    const booksRecommendations = await getBookRecommendations({
+      genre: bookGenres[0],
+    });
 
-    const message = {
-      email: userEmail,
-      genres: bookGenres.join(", "),
-      books: booksRecommendations.map((book) => book.title),
-    };
+    if (booksRecommendations.length) {
+      const message = {
+        email: userEmail,
+        genre: bookGenres[0],
+        books: booksRecommendations.map((book) => book.title),
+      };
 
-    await publishBookRecommendations(
-      envVars.QUEUE_BOOKS_RECOMMENDATIONS!,
-      message
-    );
+      await publishBookRecommendations(
+        envVars.QUEUE_BOOKS_RECOMMENDATIONS!,
+        message
+      );
+    }
   }
 
   return formatUserBooks(updatedBook);

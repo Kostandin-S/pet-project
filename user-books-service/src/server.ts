@@ -1,12 +1,18 @@
-import express, { Application } from "express";
+import express, { Application } from 'express';
 
-import envVars from "./constants/env-vars";
-import { logRoutes } from "./helpers/log-routes";
-import { connectRabbitMQ, getChannel } from "./messaging/rabbitmq";
-import errorMiddleware from "./middlewares/error.middleware";
-import { internalAuthn } from "./middlewares/internal-authn.middleware";
-import { consumeBookUpdates } from "./queues/consumer";
-import routes from "./routes";
+import envVars from './constants/env-vars';
+import { logRoutes } from './helpers/log-routes';
+import {
+  connectRabbitMQ,
+  getChannel,
+} from './messaging/rabbitmq';
+import errorMiddleware from './middlewares/error.middleware';
+import { internalAuthn } from './middlewares/internal-authn.middleware';
+import {
+  consumeBookDelete,
+  consumeBookUpdates,
+} from './queues/consumer';
+import routes from './routes';
 
 const app: Application = express();
 
@@ -29,7 +35,8 @@ const startServer = async () => {
   await connectRabbitMQ(envVars.RABBITMQ_URL!);
   console.log("RabbitMQ connected and ready to consume");
 
-  await consumeBookUpdates(envVars.QUEUE_BOOK_UPDATED!);
+  await consumeBookUpdates(envVars.QUEUE_BOOK_UPDATED);
+  await consumeBookDelete(envVars.QUEUE_BOOK_DELETED);
 };
 
 startServer();

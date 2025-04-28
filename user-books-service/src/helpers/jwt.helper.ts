@@ -1,9 +1,12 @@
-import jwt from "jsonwebtoken";
-import { NextFunction } from "express";
+import jwt from 'jsonwebtoken';
+import { NextFunction } from 'express';
 
-import envVars from "../constants/env-vars";
-import { ErrorMessages } from "../constants/errors";
-import { InternalServerError, NotAuthorized } from "../utils/errors";
+import envVars from '../constants/env-vars';
+import { ErrorMessages } from '../constants/errors';
+import {
+  InternalServerError,
+  NotAuthorized,
+} from '../utils/errors';
 
 type JwtPayload = {
   iss: string;
@@ -17,7 +20,7 @@ export const generateToken = () => {
   }
 
   const payload: JwtPayload = {
-    iss: "user-service",
+    iss: "user-books-service",
     iat: Math.floor(Date.now() / 1000),
     exp: Math.floor(Date.now() / 1000) + 300, // 5 min
   };

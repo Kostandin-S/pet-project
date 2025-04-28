@@ -1,4 +1,4 @@
-import winston from "winston";
+import winston from 'winston';
 
 const { combine, timestamp, errors, printf, colorize } = winston.format;
 
@@ -9,7 +9,7 @@ const logFormat = printf(
     const formattedDetails = details ? `- ${details}` : "";
     const formattedStack = stack ? stack : "";
 
-    return `${timestamp} ${level}: ${formattedName} ${message} ${formattedCode} ${formattedDetails}${formattedStack}`;
+    return `${timestamp} ${level}: ${formattedName} ${message} ${formattedCode} ${formattedDetails}${formattedStack} `;
   }
 );
 

@@ -75,3 +75,14 @@ export const updateManyUserBooks = async (
     throw new PrismaError(httpCode, name, message, details);
   }
 };
+
+export const deleteManyUserBooks = async (
+  where: Prisma.UserBooksWhereInput
+) => {
+  try {
+    return await prisma.userBooks.deleteMany({ where });
+  } catch (error) {
+    const { httpCode, name, message, details } = preparePrismaError(error);
+    throw new PrismaError(httpCode, name, message, details);
+  }
+};

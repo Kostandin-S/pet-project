@@ -1,4 +1,4 @@
-import { BookStatus } from "./generated/prisma/client";
+import { BookStatus } from './generated/prisma/client';
 
 export type AddUserBookRequestBody = {
   title: string;
@@ -16,6 +16,6 @@ export type UpdateUserBookRequestBody = {
 
 export type BookRecommendationsMessage = {
   email: string;
-  genres: string;
+  genre: string;
   books: string[];
 };

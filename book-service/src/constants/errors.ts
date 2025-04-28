@@ -15,4 +15,5 @@ export const ErrorMessages = {
     "You do not have the specified role to interact with this feature",
   TOKEN_HAS_EXPIRED: "Token has expired",
   NO_TOKEN_PROVIDED: "No token provided, authentication failed.",
+  GENRE_REQUIRED: "Genre is a required query param",
 };

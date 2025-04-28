@@ -1,9 +1,13 @@
-import { z } from "zod";
+import { z } from 'zod';
 
-import { AddBookRequestBody, UpdateBookRequestBody } from "./books.types";
-import { ErrorMessages } from "./constants/errors";
-import { formatZodErrors } from "./helpers/format-zod-errors";
-import { BadRequest } from "./utils/errors";
+import {
+  AddBookRequestBody,
+  BookRecommendationsQueryParams,
+  UpdateBookRequestBody,
+} from './books.types';
+import { ErrorMessages } from './constants/errors';
+import { formatZodErrors } from './helpers/format-zod-errors';
+import { BadRequest } from './utils/errors';
 
 const isbn10Regex = /^\d{9}[\dX]$/;
 const isbn13Regex = /^\d{13}$/;
@@ -54,6 +58,23 @@ export const validateUpdateBookRequestBody = (
   });
 
   const result = schema.safeParse(requestBody);
+
+  if (!result.success) {
+    const errorMessages = formatZodErrors(result.error.errors);
+    throw new BadRequest(errorMessages);
+  }
+
+  return result.data;
+};
+
+export const validateBookRecommendationsQueryParams = (
+  queryParams: BookRecommendationsQueryParams
+) => {
+  const schema = z.object({
+    genre: z.string().min(3, { message: ErrorMessages.GENRE_REQUIRED }),
+  });
+
+  const result = schema.safeParse(queryParams);
 
   if (!result.success) {
     const errorMessages = formatZodErrors(result.error.errors);

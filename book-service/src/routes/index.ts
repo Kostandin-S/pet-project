@@ -16,5 +16,6 @@ router
   .route("/:id")
   .patch(authzMiddleware, reqBodyExists, controller.updateBook);
 router.route("/:id").delete(authzMiddleware, controller.deleteBook);
+router.route("/recommendations").get(controller.recommendBooks);
 
 export default router;

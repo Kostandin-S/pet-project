@@ -1,9 +1,18 @@
-import { NextFunction, Request, Response } from "express";
-import { HttpStatusCode } from "axios";
+import {
+  NextFunction,
+  Request,
+  Response,
+} from 'express';
+import { HttpStatusCode } from 'axios';
 
-import * as service from "./books.service";
-import { validateId } from "./helpers/validate-id";
-import { publishBookUpdate } from "./queues/publisher";
+import * as service from './books.service';
+import { validateBookRecommendationsQueryParams } from './books.validator';
+import envVars from './constants/env-vars';
+import { validateId } from './helpers/validate-id';
+import {
+  publishBookDelete,
+  publishBookUpdate,
+} from './queues/publisher';
 
 export const addBook = async (
   req: Request,
@@ -58,7 +67,7 @@ export const updateBook = async (
     const updatedBook = await service.updateBook(bookId, req.body);
 
     if (req.body?.title || req.body?.author) {
-      await publishBookUpdate(process.env.QUEUE_BOOK_UPDATED!, {
+      await publishBookUpdate(envVars.QUEUE_BOOK_UPDATED, {
         bookId: updatedBook.id,
         title: updatedBook.title,
         author: updatedBook.author,
@@ -80,7 +89,29 @@ export const deleteBook = async (
     const bookId = validateId(req.params?.id);
     const deletedBook = await service.deleteBook(bookId);
 
+    await publishBookDelete(envVars.QUEUE_BOOK_DELETED, {
+      bookId: deletedBook.id,
+    });
+
     res.status(HttpStatusCode.Ok).json(deletedBook);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const recommendBooks = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const parsedQueryParams = validateBookRecommendationsQueryParams(req.query);
+
+    const recommendations = await service.recommendBooks(
+      parsedQueryParams.genre
+    );
+
+    res.status(HttpStatusCode.Ok).json(recommendations);
   } catch (error) {
     next(error);
   }

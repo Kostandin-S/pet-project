@@ -1,7 +1,7 @@
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
 
-import { InternalServerError } from "../utils/errors";
-import { ErrorMessages } from "./errors";
+import { InternalServerError } from '../utils/errors';
+import { ErrorMessages } from './errors';
 
 dotenv.config({ path: `.env.${process.env.NODE_ENV || "dev"}` });
 
@@ -21,6 +21,7 @@ const envVars = {
   RABBITMQ_URL: getEnvVar("RABBITMQ_URL"),
   QUEUE_BOOK_UPDATED: getEnvVar("QUEUE_BOOK_UPDATED"),
   QUEUE_BOOKS_RECOMMENDATIONS: getEnvVar("QUEUE_BOOKS_RECOMMENDATIONS"),
+  QUEUE_BOOK_DELETED: getEnvVar("QUEUE_BOOK_DELETED"),
 } as const;
 
 export default envVars;
