@@ -1,7 +1,7 @@
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
 
-import { InternalServerError } from "../utils/errors";
-import { ErrorMessages } from "./errors";
+import { InternalServerError } from '../utils/errors';
+import { ErrorMessages } from './errors';
 
 dotenv.config({ path: `.env.${process.env.NODE_ENV || "dev"}` });
 
