@@ -1,11 +1,14 @@
-import axios, { AxiosError, AxiosResponse } from "axios";
+import axios, {
+  AxiosError,
+  AxiosResponse,
+} from 'axios';
 
-import { CreateProfileParams } from "../../auth.types";
-import envVars from "../../constants/env-vars";
-import { HttpMethod } from "../../enums/http-methods";
-import { internalErrorHandlers } from "../../helpers/internal-errors-handler";
-import { generateToken } from "../../helpers/jwt.helper";
-import { GenericError, Profile } from "./types";
+import { CreateProfileParams } from '../../auth.types';
+import envVars from '../../constants/env-vars';
+import { HttpMethod } from '../../enums/http-methods';
+import { handleInterServiceError } from '../../helpers/handle-inter-service-error';
+import { generateToken } from '../../helpers/jwt.helper';
+import { GenericError, Profile } from './types';
 
 export const createProfile = async (params: CreateProfileParams) => {
   try {
@@ -23,6 +26,6 @@ export const createProfile = async (params: CreateProfileParams) => {
     const errorData = error as AxiosError<GenericError>;
     const errorResponse: AxiosResponse<GenericError> | undefined =
       errorData.response;
-    throw internalErrorHandlers(errorResponse);
+    throw handleInterServiceError(errorResponse);
   }
 };

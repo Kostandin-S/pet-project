@@ -3,6 +3,7 @@ import {
   HttpStatusCode,
 } from 'axios';
 
+import { ErrorMessages } from '../constants/errors';
 import { GenericError } from '../requests/user-service/types';
 import {
   BadRequest,
@@ -14,11 +15,11 @@ import {
   UnprocessableEntity,
 } from '../utils/errors';
 
-export const internalErrorHandlers = (
+export const handleInterServiceError = (
   error: AxiosResponse<GenericError> | undefined
 ) => {
   const statusCode = error?.status || HttpStatusCode.InternalServerError;
-  const details = error?.data?.details || "Something went wrong";
+  const details = error?.data?.details || ErrorMessages.SOMETHING_WENT_WRONG;
 
   switch (statusCode) {
     case HttpStatusCode.BadRequest:

@@ -1,7 +1,11 @@
-import { NextFunction, Request, Response } from "express";
-import { HttpStatusCode } from "axios";
+import {
+  NextFunction,
+  Request,
+  Response,
+} from 'express';
+import { HttpStatusCode } from 'axios';
 
-import * as service from "./auth.services";
+import * as service from './auth.services';
 
 export const registerUser = async (
   req: Request,
@@ -26,8 +30,6 @@ export const loginUser = async (
 
     req.session.userId = user.id;
     req.session.isAdmin = user.isAdmin;
-
-    console.log(req.session);
 
     res.sendStatus(HttpStatusCode.Ok);
   } catch (e) {

@@ -1,13 +1,13 @@
-import express, { Application } from "express";
-import session from "express-session";
-import connectPgSimple from "connect-pg-simple";
+import express, { Application } from 'express';
+import session from 'express-session';
+import connectPgSimple from 'connect-pg-simple';
 
-import logger from "./config/logger";
-import envVars from "./constants/env-vars";
-import { logRoutes } from "./helpers/log-routes";
-import { errorMiddleware } from "./middlewares/error.middleware";
-import { internalAuthn } from "./middlewares/internal-authn.middleware";
-import routes from "./routes";
+import logger from './config/logger';
+import envVars from './constants/env-vars';
+import { logRoutes } from './helpers/log-routes';
+import { errorMiddleware } from './middlewares/error.middleware';
+import { interServiceAuthn } from './middlewares/inter-service-authn.middleware';
+import routes from './routes';
 
 const app: Application = express();
 const pgSession = connectPgSimple(session);
@@ -37,7 +37,7 @@ app.use(routes);
 
 app.use(errorMiddleware);
 
-app.use(internalAuthn);
+app.use(interServiceAuthn);
 
 logRoutes(routes.stack);
 

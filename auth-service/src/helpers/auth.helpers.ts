@@ -1,10 +1,13 @@
-import bcryptjs from "bcryptjs";
+import bcryptjs from 'bcryptjs';
 
-import { ErrorMessages } from "../constants/errors";
-import { User } from "../generated/prisma";
-import * as userDal from "../repository/users.dal";
-import { Profile } from "../requests/user-service/types";
-import { NotAuthenticated, UnprocessableEntity } from "../utils/errors";
+import { ErrorMessages } from '../constants/errors';
+import { User } from '../generated/prisma';
+import * as userDal from '../repository/users.dal';
+import { Profile } from '../requests/user-service/types';
+import {
+  NotAuthenticated,
+  UnprocessableEntity,
+} from '../utils/errors';
 
 export const checkIfUserExistsByEmail = async (email: string) => {
   const user = await userDal.findUniqueUser({ email });

@@ -12,6 +12,7 @@ export const ErrorMessages = {
   PASSWORD_LOWERCASE: "Password must contain at least one lowercase letter",
   PASSWORD_NUMBER: "Password must contain at least one number",
   PASSWORD_SPECIAL_CHAR: "Password must contain at least one special character",
+  SOMETHING_WENT_WRONG: "Something Went Wrong",
 
   // Middleware-related errors
   MISSING_REQ_BODY: "Request body is missing or empty.",
