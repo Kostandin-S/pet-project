@@ -2,15 +2,16 @@ import axios, { AxiosResponse } from 'axios';
 
 import { HttpMethod } from '../../../enums/http-methods';
 import { InternalServerError } from '../../../utils/errors';
-import { GoogleBooksApiResponse } from '../types';
+import { generateRequestQuery } from '../helpers';
+import {
+  FuncParams,
+  GoogleBooksApiResponse,
+} from '../types';
 
-type Params = {
-  title: string;
-  author: string;
-};
-
-export const searchBookInGoogleBooks = async (params: Params) => {
-  const url = `https://www.googleapis.com/books/v1/volumes?q=intitle:${params.title}+inauthor:${params.author}`;
+export const searchBookInGoogleBooks = async (params: FuncParams) => {
+  const url = `https://www.googleapis.com/books/v1/volumes?q=${generateRequestQuery(
+    params
+  )}`;
 
   try {
     const response: AxiosResponse<GoogleBooksApiResponse> = await axios({

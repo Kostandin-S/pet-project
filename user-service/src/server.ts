@@ -1,18 +1,15 @@
 import express, { Application } from 'express';
-import dotenv from 'dotenv';
+import { Server } from 'http';
 
-import errors from './constants/errors';
+import logger from './config/logger';
+import envVars from './constants/env-vars';
 import { logRoutes } from './helpers/log-routes';
+import { connectRabbitMQ } from './messaging/rabbitmq';
 import { errorMiddleware } from './middlewares/error.middleware';
 import { internalAuthn } from './middlewares/internal-authn.middleware';
 import routes from './routes';
-import { InternalServerError } from './utils/errors';
 
-dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
-
-if (!process.env.PORT || !process.env.DATABASE_URL) {
-  throw new InternalServerError(errors.ENV_VARS_MISSING);
-}
+let server: Server;
 
 const app: Application = express();
 
@@ -27,6 +24,40 @@ app.use(errorMiddleware);
 
 logRoutes(routes.stack);
 
-app.listen(process.env.PORT, () => {
-  console.log(`User service is up and running on port ${process.env.PORT}`);
-});
+const startServer = async () => {
+  try {
+    server = app.listen(envVars.PORT, () => {
+      logger.info(`User service is up and running on port ${envVars.PORT}`);
+    });
+
+    await connectRabbitMQ(envVars.RABBITMQ_URL);
+    logger.info("RabbitMQ connected and ready to publish");
+  } catch (error) {
+    logger.error("Error starting server or connecting to RabbitMQ:", error);
+    process.exit(1);
+  }
+};
+
+const exitHandler = () => {
+  if (server) {
+    server.close(() => {
+      logger.info("Server closed");
+      process.exit(0);
+    });
+  } else {
+    process.exit(0);
+  }
+};
+
+const unexpectedErrorHandler = (error: unknown) => {
+  logger.error("Unexpected error:", error);
+  exitHandler();
+};
+
+process.on("uncaughtException", unexpectedErrorHandler);
+process.on("unhandledRejection", unexpectedErrorHandler);
+
+process.on("SIGTERM", exitHandler);
+process.on("SIGINT", exitHandler);
+
+startServer();

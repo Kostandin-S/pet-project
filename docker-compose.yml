@@ -19,6 +19,9 @@ services:
     container_name: auth-service
     ports:
       - "3001:3001"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
     env_file:
       - ./auth-service/.env.staging
 
@@ -28,6 +31,9 @@ services:
     container_name: user-service
     ports:
       - "3002:3002"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
     env_file:
       - ./user-service/.env.staging
 

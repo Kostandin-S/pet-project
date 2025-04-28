@@ -1,39 +1,36 @@
-import express, { Request, Response } from "express";
+import express, {
+  Application,
+  Request,
+  Response,
+} from 'express';
+import { HttpStatusCode } from 'axios';
 
-import envVars from "./constants/env-vars";
-import errors from "./constants/errors";
-import routes from "./constants/routes";
-import { HttpStatusCode } from "./enums/http-status-code";
-import proxyRouter from "./proxyRouter";
-import { InternalServerError } from "./utils/errors";
+import logger from './config/logger';
+import envVars from './constants/env-vars';
+import { RouterPaths } from './constants/routes';
+import { errorMiddleware } from './middlewares/error.middleware';
+import proxyRouter from './proxyRouter';
 
-if (
-  !envVars.PORT ||
-  !envVars.AUTH_SERVICE_URL ||
-  !envVars.USER_SERVICE_URL ||
-  !envVars.BOOK_SERVICE_URL
-) {
-  throw new InternalServerError(errors.ENV_VARS_MISSING);
-}
-
-const app = express();
+const app: Application = express();
 
 app.use(express.urlencoded({ extended: true }));
 
-app.get(routes.HEALTH, (_req: Request, res: Response) => {
-  res.sendStatus(HttpStatusCode.OK);
+app.get(RouterPaths.HEALTH, (_req: Request, res: Response) => {
+  res.sendStatus(HttpStatusCode.Ok);
 });
 
-app.use(routes.BASE_PATH, proxyRouter);
+app.use(RouterPaths.BASE_PATH, proxyRouter);
+
+app.use(errorMiddleware);
 
 const server = app.listen(envVars.PORT, () => {
-  console.log(`Gateway is listening on Port ${envVars.PORT}`);
+  logger.info(`Gateway is listening on Port ${envVars.PORT}`);
 });
 
 const exitHandler = () => {
   if (server) {
     server.close(() => {
-      console.info("Server closed");
+      logger.info("Server closed");
       process.exit(1);
     });
   } else {
@@ -42,11 +39,12 @@ const exitHandler = () => {
 };
 
 const unexpectedErrorHandler = (error: unknown) => {
-  console.error(error);
+  logger.error("Unexpected error:", error);
   exitHandler();
 };
 
 process.on("uncaughtException", unexpectedErrorHandler);
 process.on("unhandledRejection", unexpectedErrorHandler);
+
 process.on("SIGTERM", exitHandler);
 process.on("SIGINT", exitHandler);

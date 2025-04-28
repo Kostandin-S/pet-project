@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "lint": "eslint 'src/**/*.ts' --ignore-pattern 'src/generated/**/*'",
+    "lint:fix": "eslint 'src/**/*.ts' --ignore-pattern 'src/generated/**/*' --fix",
     "dev": "NODE_ENV=dev nodemon src/server.ts",
     "build": "rm -rf dist && npx tsc",
     "start": "NODE_ENV=dev ts-node dist/server.js"
@@ -21,7 +23,8 @@
     "jsonwebtoken": "^9.0.2",
     "nodemailer": "^6.10.1",
     "nodemon": "^3.1.10",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.1",

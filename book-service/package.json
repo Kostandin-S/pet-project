@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint 'src/**/*.{js,ts}'",
-    "lint:fix": "eslint 'src/**/*.{js,ts}' --fix",
+    "lint": "eslint 'src/**/*.ts' --ignore-pattern 'src/generated/**/*'",
+    "lint:fix": "eslint 'src/**/*.ts' --ignore-pattern 'src/generated/**/*' --fix",
     "db:migrate:dev": "dotenv -e .env.dev -- npx prisma migrate dev",
     "db:seed:dev": "NODE_ENV=dev ts-node --transpile-only prisma/seed.ts",
     "copy:prisma": "cp -r src/generated dist/generated",

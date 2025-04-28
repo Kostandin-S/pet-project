@@ -12,3 +12,7 @@ export type RegisterUserReqBody = {
   nickname?: string;
   bio?: string;
 };
+
+export type UserDeleteMessage = {
+  userId: string;
+};

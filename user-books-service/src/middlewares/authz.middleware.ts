@@ -1,11 +1,7 @@
-import {
-  NextFunction,
-  Request,
-  Response,
-} from 'express';
+import { NextFunction, Request, Response } from "express";
 
-import errors from '../constants/errors';
-import { NotAuthenticated } from '../utils/errors';
+import { ErrorMessages } from "../constants/errors";
+import { NotAuthenticated } from "../utils/errors";
 
 enum Role {
   User = "user",
@@ -18,7 +14,7 @@ export const authzMiddleware = (
   next: NextFunction
 ) => {
   if (req.headers["x-user-role"] === Role.User) {
-    next(new NotAuthenticated(errors.MISSING_ROLE));
+    next(new NotAuthenticated(ErrorMessages.MISSING_ROLE));
     return;
   }
 

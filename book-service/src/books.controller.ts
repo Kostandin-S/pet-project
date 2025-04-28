@@ -3,11 +3,16 @@ import {
   Request,
   Response,
 } from 'express';
+import { HttpStatusCode } from 'axios';
 
 import * as service from './books.service';
-import { HttpStatusCode } from './enums/http-status-code';
+import { validateBookRecommendationsQueryParams } from './books.validator';
+import envVars from './constants/env-vars';
 import { validateId } from './helpers/validate-id';
-import { publishBookUpdate } from './queues/publisher';
+import {
+  publishBookDelete,
+  publishBookUpdate,
+} from './queues/publisher';
 
 export const addBook = async (
   req: Request,
@@ -31,7 +36,7 @@ export const getBooks = async (
   try {
     const books = await service.getBooks(req.query);
 
-    res.status(HttpStatusCode.OK).json(books);
+    res.status(HttpStatusCode.Ok).json(books);
   } catch (error) {
     next(error);
   }
@@ -46,7 +51,7 @@ export const getBookById = async (
     const bookId = validateId(req.params?.id);
     const book = await service.getBookById(bookId);
 
-    res.status(HttpStatusCode.OK).json(book);
+    res.status(HttpStatusCode.Ok).json(book);
   } catch (error) {
     next(error);
   }
@@ -62,14 +67,14 @@ export const updateBook = async (
     const updatedBook = await service.updateBook(bookId, req.body);
 
     if (req.body?.title || req.body?.author) {
-      await publishBookUpdate(process.env.QUEUE_BOOK_UPDATED!, {
+      await publishBookUpdate(envVars.QUEUE_BOOK_UPDATED, {
         bookId: updatedBook.id,
         title: updatedBook.title,
         author: updatedBook.author,
       });
     }
 
-    res.status(HttpStatusCode.OK).json(updatedBook);
+    res.status(HttpStatusCode.Ok).json(updatedBook);
   } catch (error) {
     next(error);
   }
@@ -84,7 +89,29 @@ export const deleteBook = async (
     const bookId = validateId(req.params?.id);
     const deletedBook = await service.deleteBook(bookId);
 
-    res.status(HttpStatusCode.OK).json(deletedBook);
+    await publishBookDelete(envVars.QUEUE_BOOK_DELETED, {
+      bookId: deletedBook.id,
+    });
+
+    res.status(HttpStatusCode.Ok).json(deletedBook);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const recommendBooks = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const parsedQueryParams = validateBookRecommendationsQueryParams(req.query);
+
+    const recommendations = await service.recommendBooks(
+      parsedQueryParams.genre
+    );
+
+    res.status(HttpStatusCode.Ok).json(recommendations);
   } catch (error) {
     next(error);
   }

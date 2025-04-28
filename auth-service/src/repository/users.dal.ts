@@ -1,6 +1,9 @@
-import { Prisma, PrismaClient } from "../generated/prisma/client";
-import { preparePrismaError } from "../helpers/generate-prisma-error";
-import { PrismaError } from "../utils/errors";
+import {
+  Prisma,
+  PrismaClient,
+} from '../generated/prisma/client';
+import { preparePrismaError } from '../helpers/generate-prisma-error';
+import { PrismaError } from '../utils/errors';
 
 const prisma = new PrismaClient();
 

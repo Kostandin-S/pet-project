@@ -1,47 +1,68 @@
-import express, { Request, Response } from "express";
+import express, {
+  Application,
+  Request,
+  Response,
+} from 'express';
+import { Server } from 'http';
 
-import envVars from "./constants/env-vars";
-import errors from "./constants/errors";
-import { HttpStatusCode } from "./enums/http-status-code";
-import { connectRabbitMQ, getChannel } from "./messaging/rabbitmq";
-import { consumeBookRecommendations } from "./queues/consumer";
-import { InternalServerError } from "./utils/errors";
+import logger from './config/logger';
+import envVars from './constants/env-vars';
+import { HttpStatusCode } from './enums/http-status-code';
+import { connectRabbitMQ } from './messaging/rabbitmq';
+import { consumeBookRecommendations } from './queues/consumer';
 
-if (
-  !envVars.PORT ||
-  !envVars.JWT_SECRET ||
-  !envVars.QUEUE_BOOKS_RECOMMENDATIONS ||
-  !envVars.RABBITMQ_URL
-) {
-  throw new InternalServerError(errors.ENV_VARS_MISSING);
-}
+let server: Server;
 
-const app = express();
+const app: Application = express();
 
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/health", (_req: Request, res: Response) => {
-  res.sendStatus(HttpStatusCode.OK);
+  res.status(HttpStatusCode.OK).json({
+    service: "Notification",
+    status: HttpStatusCode.OK,
+  });
 });
 
 const startServer = async () => {
-  app.listen(process.env.PORT, () => {
-    console.log(
-      `Notification service is up and running on port ${process.env.PORT}`
-    );
-  });
+  try {
+    server = app.listen(envVars.PORT, () => {
+      logger.info(
+        `Notification service is up and running on port ${envVars.PORT}`
+      );
+    });
 
-  await connectRabbitMQ(process.env.RABBITMQ_URL!);
-  console.log("RabbitMQ connected and ready to consume");
+    await connectRabbitMQ(envVars.RABBITMQ_URL);
+    logger.info("RabbitMQ connected and ready to consume");
 
-  await consumeBookRecommendations(envVars.QUEUE_BOOKS_RECOMMENDATIONS!);
+    await consumeBookRecommendations(envVars.QUEUE_BOOKS_RECOMMENDATIONS);
+    logger.info("Book recommendations queue is connected and ready to consume");
+  } catch (error) {
+    logger.error("Error starting server or connecting to RabbitMQ:", error);
+    process.exit(1);
+  }
 };
 
-startServer();
+const exitHandler = () => {
+  if (server) {
+    server.close(() => {
+      logger.info("Server closed");
+      process.exit(0);
+    });
+  } else {
+    process.exit(0);
+  }
+};
 
-process.on("SIGINT", async () => {
-  console.log("Shutting down...");
-  const channel = getChannel();
-  await channel.close();
-  process.exit(0);
-});
+const unexpectedErrorHandler = (error: unknown) => {
+  logger.error("Unexpected error:", error);
+  exitHandler();
+};
+
+process.on("uncaughtException", unexpectedErrorHandler);
+process.on("unhandledRejection", unexpectedErrorHandler);
+
+process.on("SIGTERM", exitHandler);
+process.on("SIGINT", exitHandler);
+
+startServer();

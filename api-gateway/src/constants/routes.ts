@@ -1,4 +1,4 @@
-export default {
+export const RouterPaths = {
   BASE_PATH: "/api/v1",
   AUTH: "/auth",
   USERS: "/users",

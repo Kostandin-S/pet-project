@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import errors from "./constants/errors";
+import { ErrorMessages } from "./constants/errors";
 import { formatZodErrors } from "./helpers/format-zod-errors";
 import { RegisterUserReqBody, UpdateUserRequestBody } from "./users.types";
 import { BadRequest } from "./utils/errors";
@@ -11,17 +11,20 @@ export const validateUpdateUserRequestBody = (
   const schema = z.object({
     firstName: z
       .string()
-      .min(3, { message: errors.FIRST_NAME_MIN_LENGTH })
+      .min(3, { message: ErrorMessages.FIRST_NAME_MIN_LENGTH })
       .optional(),
     lastName: z
       .string()
-      .min(3, { message: errors.LAST_NAME_MIN_LENGTH })
+      .min(3, { message: ErrorMessages.LAST_NAME_MIN_LENGTH })
       .optional(),
     nickname: z
       .string()
-      .min(3, { message: errors.NICKNAME_MIN_LENGTH })
+      .min(3, { message: ErrorMessages.NICKNAME_MIN_LENGTH })
       .optional(),
-    bio: z.string().min(3, { message: errors.BIO_MIN_LENGTH }).optional(),
+    bio: z
+      .string()
+      .min(3, { message: ErrorMessages.BIO_MIN_LENGTH })
+      .optional(),
   });
 
   const result = schema.safeParse(requestBody);
@@ -39,13 +42,18 @@ export const validateCreateUserRequestBody = (
 ) => {
   const schema = z.object({
     userId: z.string(),
-    firstName: z.string().min(3, { message: errors.FIRST_NAME_REQUIRED }),
-    lastName: z.string().min(3, { message: errors.LAST_NAME_REQUIRED }),
+    firstName: z
+      .string()
+      .min(3, { message: ErrorMessages.FIRST_NAME_REQUIRED }),
+    lastName: z.string().min(3, { message: ErrorMessages.LAST_NAME_REQUIRED }),
     nickname: z
       .string()
-      .min(3, { message: errors.NICKNAME_MIN_LENGTH })
+      .min(3, { message: ErrorMessages.NICKNAME_MIN_LENGTH })
       .optional(),
-    bio: z.string().min(3, { message: errors.BIO_MIN_LENGTH }).optional(),
+    bio: z
+      .string()
+      .min(3, { message: ErrorMessages.BIO_MIN_LENGTH })
+      .optional(),
   });
 
   const result = schema.safeParse(requestBody);
@@ -56,10 +64,4 @@ export const validateCreateUserRequestBody = (
   }
 
   return result.data;
-};
-
-export const validateId = (providedId?: string) => {
-  if (!providedId) throw new BadRequest(errors.INVALID_ID);
-
-  return providedId;
 };

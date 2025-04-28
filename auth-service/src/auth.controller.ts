@@ -1,7 +1,11 @@
-import { NextFunction, Request, Response } from "express";
+import {
+  NextFunction,
+  Request,
+  Response,
+} from 'express';
+import { HttpStatusCode } from 'axios';
 
-import * as service from "./auth.services";
-import { HttpStatusCode } from "./enums/http-status-code";
+import * as service from './auth.services';
 
 export const registerUser = async (
   req: Request,
@@ -27,9 +31,7 @@ export const loginUser = async (
     req.session.userId = user.id;
     req.session.isAdmin = user.isAdmin;
 
-    console.log(req.session);
-
-    res.sendStatus(HttpStatusCode.OK);
+    res.sendStatus(HttpStatusCode.Ok);
   } catch (e) {
     next(e);
   }
@@ -44,7 +46,7 @@ export const logoutUser = async (
     await service.logoutUser(req);
 
     res.clearCookie("connect.sid");
-    res.sendStatus(HttpStatusCode.OK);
+    res.sendStatus(HttpStatusCode.Ok);
   } catch (e) {
     next(e);
   }
@@ -59,7 +61,7 @@ export const validateSession = async (
     const user = await service.validateSession(req);
 
     res
-      .status(HttpStatusCode.OK)
+      .status(HttpStatusCode.Ok)
       .send({ userId: user.id, isAdmin: user.isAdmin, email: user.email });
   } catch (e) {
     next(e);

@@ -30,3 +30,12 @@ export type GenericError = {
   message: string;
   details: string;
 };
+
+export type GetBookRecommendationsParams = {
+  genre: string;
+};
+
+export type GetBookRecommendationsResponse = {
+  title: string;
+  author: string;
+}[];

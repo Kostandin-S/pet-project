@@ -3,4 +3,5 @@ export default {
   LOGIN: "/login",
   LOGOUT: "/logout",
   SESSION_VALIDATION: "/session-validation",
+  HEALTH: "/health",
 };

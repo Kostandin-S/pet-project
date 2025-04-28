@@ -1,17 +1,14 @@
-import {
-  Request,
-  Response,
-  Router,
-} from 'express';
+import { HttpStatusCode } from "axios";
+import { Request, Response, Router } from "express";
 
-import { HttpStatusCode } from '../enums/http-status-code';
+import routes from "../constants/routes";
 
 const router = Router();
 
-router.route("/health").get((_req: Request, res: Response) => {
-  res.status(HttpStatusCode.OK).json({
+router.route(routes.HEALTH).get((_req: Request, res: Response) => {
+  res.status(HttpStatusCode.Ok).json({
     service: "Auth",
-    status: HttpStatusCode.OK,
+    status: HttpStatusCode.Ok,
   });
 });
 

@@ -1,13 +1,12 @@
+import { HttpStatusCode } from "axios";
 import { Request, Response, Router } from "express";
-
-import { HttpStatusCode } from "../enums/http-status-code";
 
 const router = Router();
 
 router.route("/health").get((_req: Request, res: Response) => {
-  res.status(HttpStatusCode.OK).json({
+  res.status(HttpStatusCode.Ok).json({
     service: "Book",
-    status: HttpStatusCode.OK,
+    status: HttpStatusCode.Ok,
   });
 });
 
