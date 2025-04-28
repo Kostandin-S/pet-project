@@ -1,11 +1,15 @@
-import express, { Application, Request, Response } from "express";
-import { HttpStatusCode } from "axios";
+import express, {
+  Application,
+  Request,
+  Response,
+} from 'express';
+import { HttpStatusCode } from 'axios';
 
-import logger from "./config/logger";
-import envVars from "./constants/env-vars";
-import { RouterPaths } from "./constants/routes";
-import { errorMiddleware } from "./middlewares/error.middleware";
-import proxyRouter from "./proxyRouter";
+import logger from './config/logger';
+import envVars from './constants/env-vars';
+import { RouterPaths } from './constants/routes';
+import { errorMiddleware } from './middlewares/error.middleware';
+import proxyRouter from './proxyRouter';
 
 const app: Application = express();
 
@@ -20,7 +24,7 @@ app.use(RouterPaths.BASE_PATH, proxyRouter);
 app.use(errorMiddleware);
 
 const server = app.listen(envVars.PORT, () => {
-  console.log(`Gateway is listening on Port ${envVars.PORT}`);
+  logger.info(`Gateway is listening on Port ${envVars.PORT}`);
 });
 
 const exitHandler = () => {
