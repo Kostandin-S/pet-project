@@ -1,11 +1,10 @@
 import express, { Application } from 'express';
+import { Server } from 'http';
 
+import logger from './config/logger';
 import envVars from './constants/env-vars';
 import { logRoutes } from './helpers/log-routes';
-import {
-  connectRabbitMQ,
-  getChannel,
-} from './messaging/rabbitmq';
+import { connectRabbitMQ } from './messaging/rabbitmq';
 import errorMiddleware from './middlewares/error.middleware';
 import { internalAuthn } from './middlewares/internal-authn.middleware';
 import {
@@ -13,6 +12,8 @@ import {
   consumeBookUpdates,
 } from './queues/consumer';
 import routes from './routes';
+
+let server: Server;
 
 const app: Application = express();
 
@@ -28,22 +29,47 @@ app.use(errorMiddleware);
 logRoutes(routes.stack);
 
 const startServer = async () => {
-  app.listen(envVars.PORT, () => {
-    console.log(`User-Books service is up and running on port ${envVars.PORT}`);
-  });
+  try {
+    server = app.listen(envVars.PORT, () => {
+      logger.info(
+        `User-Books service is up and running on port ${envVars.PORT}`
+      );
+    });
 
-  await connectRabbitMQ(envVars.RABBITMQ_URL!);
-  console.log("RabbitMQ connected and ready to consume");
+    await connectRabbitMQ(envVars.RABBITMQ_URL!);
+    logger.info("RabbitMQ connected and ready to consume");
 
-  await consumeBookUpdates(envVars.QUEUE_BOOK_UPDATED);
-  await consumeBookDelete(envVars.QUEUE_BOOK_DELETED);
+    await consumeBookUpdates(envVars.QUEUE_BOOK_UPDATED);
+    logger.info("RabbitMQ connected and ready to act upon book update event");
+
+    await consumeBookDelete(envVars.QUEUE_BOOK_DELETED);
+    logger.info("RabbitMQ connected and ready to act upon book delete event");
+  } catch (error) {
+    logger.error("Error starting server or connecting to RabbitMQ:", error);
+    process.exit(1);
+  }
 };
 
-startServer();
+const exitHandler = () => {
+  if (server) {
+    server.close(() => {
+      logger.info("Server closed");
+      process.exit(0);
+    });
+  } else {
+    process.exit(0);
+  }
+};
 
-process.on("SIGINT", async () => {
-  console.log("Shutting down...");
-  const channel = getChannel();
-  await channel.close();
-  process.exit(0);
-});
+const unexpectedErrorHandler = (error: unknown) => {
+  logger.error("Unexpected error:", error);
+  exitHandler();
+};
+
+process.on("uncaughtException", unexpectedErrorHandler);
+process.on("unhandledRejection", unexpectedErrorHandler);
+
+process.on("SIGTERM", exitHandler);
+process.on("SIGINT", exitHandler);
+
+startServer();
