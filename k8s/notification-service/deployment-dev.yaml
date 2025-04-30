@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification-service
+  template:
+    metadata:
+      labels:
+        app: notification-service
+    spec:
+      containers:
+        - name: notification-service
+          image: docker.io/kostandins/book-tracker-microservices-notification-service:dev
+          ports:
+            - containerPort: 3005
+          env:
+            - name: NODE_ENV
+              value: dev
+            - name: PORT
+              value: "3005"
+            - name: RABBITMQ_URL
+              value: amqp://guest:guest@rabbitmq:5672
+            - name: QUEUE_BOOKS_RECOMMENDATIONS
+              value: queue_books_recommendations
+            - name: MAILTRAP_HOST
+              value: bulk.smtp.mailtrap.io
+            - name: MAILTRAP_PORT
+              value: "587"
+            - name: MAILTRAP_USER
+              value: smtp@mailtrap.io
+            - name: MAILTRAP_PASS
+              value: 8a88638afae7d50ff4ae5b84c407d0ce
