@@ -22,13 +22,3 @@ spec:
               value: dev
             - name: PORT
               value: "3003"
-            - name: DATABASE_URL
-              value: postgresql://postgres.juiqpttgxazecbcliibr:6m2QBHnQpmwpZMb9@aws-0-eu-central-1.pooler.supabase.com:5432/postgres?schema=book_service
-            - name: RABBITMQ_URL
-              value: amqp://guest:guest@rabbitmq:5672
-            - name: QUEUE_BOOK_DELETED
-              value: book_deleted_queue
-            - name: QUEUE_BOOK_UPDATED
-              value: book_updated_queue
-            - name: JWT_SECRET
-              value: fell-in-love-with-an-alien

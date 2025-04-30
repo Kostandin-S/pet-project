@@ -22,13 +22,3 @@ spec:
               value: prod
             - name: PORT
               value: "3000"
-            - name: JWT_SECRET
-              value: fell-in-love-with-an-alien
-            - name: AUTH_SERVICE_URL
-              value: http://auth-service:3001
-            - name: USER_SERVICE_URL
-              value: http://user-service:3002
-            - name: BOOK_SERVICE_URL
-              value: http://book-service:3003
-            - name: USER_BOOKS_SERVICE_URL
-              value: http://user-books-service:3004
