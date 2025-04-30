@@ -22,15 +22,3 @@ spec:
               value: dev
             - name: PORT
               value: "3001"
-            - name: SESSION_SECRET
-              value: it-is-super-secret-session-secret
-            - name: DATABASE_URL
-              value: postgresql://postgres.juiqpttgxazecbcliibr:6m2QBHnQpmwpZMb9@aws-0-eu-central-1.pooler.supabase.com:5432/postgres?schema=auth_service
-            - name: JWT_SECRET
-              value: fell-in-love-with-an-alien
-            - name: USER_SERVICE_URL
-              value: http://user-service:3002
-            - name: RABBITMQ_URL
-              value: amqp://guest:guest@rabbitmq:5672
-            - name: QUEUE_USER_DELETED
-              value: user_deleted_queue
