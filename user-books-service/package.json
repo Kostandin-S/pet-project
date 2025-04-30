@@ -4,13 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint 'src/**/*.{js,ts}'",
-    "lint:fix": "eslint 'src/**/*.{js,ts}' --fix",
+    "lint": "eslint 'src/**/*.ts' --ignore-pattern 'src/generated/**/*'",
+    "lint:fix": "eslint 'src/**/*.ts' --ignore-pattern 'src/generated/**/*' --fix",
     "db:migrate:dev": "dotenv -e .env.dev -- npx prisma migrate dev",
     "dev": "NODE_ENV=dev nodemon src/server.ts",
     "build": "rm -rf dist && npx tsc && npm run copy:prisma",
     "copy:prisma": "cp -r src/generated dist/generated",
-    "start": "NODE_ENV=dev ts-node dist/server.js"
+    "start": "NODE_ENV=dev ts-node dist/server.js",
+    "build:push:docker": "bash scripts/build-and-push.sh user-books-service kostandins"
   },
   "keywords": [],
   "author": "",

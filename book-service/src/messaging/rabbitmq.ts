@@ -1,4 +1,4 @@
-import amqp from 'amqplib';
+import amqp from "amqplib";
 
 let channel: amqp.Channel;
 

@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 
 import { HttpStatusCode } from "./enums/http-status-code";
+import { validateId } from "./helpers/users.helpers";
 import * as service from "./users.services";
-import { validateId } from "./users.validator";
 
 export const getUsers = async (
   _req: Request,

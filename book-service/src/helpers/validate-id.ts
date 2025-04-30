@@ -1,8 +1,8 @@
-import errors from '../constants/errors';
-import { BadRequest } from '../utils/errors';
+import { ErrorMessages } from "../constants/errors";
+import { BadRequest } from "../utils/errors";
 
 export const validateId = (providedId?: string) => {
-  if (!providedId) throw new BadRequest(errors.INVALID_ID);
+  if (!providedId) throw new BadRequest(ErrorMessages.INVALID_ID);
 
   return providedId;
 };

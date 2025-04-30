@@ -1,27 +1,20 @@
-import express, { Application } from "express";
-import dotenv from "dotenv";
+import express, { Application } from 'express';
+import { Server } from 'http';
 
-import errors from "./constants/errors";
-import { logRoutes } from "./helpers/log-routes";
-import { connectRabbitMQ, getChannel } from "./messaging/rabbitmq";
-import errorMiddleware from "./middlewares/error.middleware";
-import { internalAuthn } from "./middlewares/internal-authn.middleware";
-import { consumeBookUpdates } from "./queues/consumer";
-import routes from "./routes";
-import { InternalServerError } from "./utils/errors";
+import logger from './config/logger';
+import envVars from './constants/env-vars';
+import { logRoutes } from './helpers/log-routes';
+import { connectRabbitMQ } from './messaging/rabbitmq';
+import errorMiddleware from './middlewares/error.middleware';
+import { internalAuthn } from './middlewares/internal-authn.middleware';
+import {
+  consumeBookDelete,
+  consumeBookUpdates,
+  consumeUserDelete,
+} from './queues/consumer';
+import routes from './routes';
 
-dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
-
-if (
-  !process.env.PORT ||
-  !process.env.DATABASE_URL ||
-  !process.env.JWT_SECRET ||
-  !process.env.RABBITMQ_URL ||
-  !process.env.QUEUE_BOOK_UPDATED ||
-  !process.env.QUEUE_BOOKS_RECOMMENDATIONS
-) {
-  throw new InternalServerError(errors.ENV_VARS_MISSING);
-}
+let server: Server;
 
 const app: Application = express();
 
@@ -37,23 +30,50 @@ app.use(errorMiddleware);
 logRoutes(routes.stack);
 
 const startServer = async () => {
-  app.listen(process.env.PORT, () => {
-    console.log(
-      `User-Books service is up and running on port ${process.env.PORT}`
-    );
-  });
+  try {
+    server = app.listen(envVars.PORT, () => {
+      logger.info(
+        `User-Books service is up and running on port ${envVars.PORT}`
+      );
+    });
 
-  await connectRabbitMQ(process.env.RABBITMQ_URL!);
-  console.log("RabbitMQ connected and ready to consume");
+    await connectRabbitMQ(envVars.RABBITMQ_URL);
+    logger.info("RabbitMQ connected and ready to consume");
 
-  await consumeBookUpdates(process.env.QUEUE_BOOK_UPDATED!);
+    await consumeBookUpdates(envVars.QUEUE_BOOK_UPDATED);
+    logger.info("RabbitMQ connected and ready to act upon book update event");
+
+    await consumeBookDelete(envVars.QUEUE_BOOK_DELETED);
+    logger.info("RabbitMQ connected and ready to act upon book delete event");
+
+    await consumeUserDelete(envVars.QUEUE_USER_DELETED);
+    logger.info("RabbitMQ connected and ready to act upon user delete event");
+  } catch (error) {
+    logger.error("Error starting server or connecting to RabbitMQ:", error);
+    process.exit(1);
+  }
 };
 
-startServer();
+const exitHandler = () => {
+  if (server) {
+    server.close(() => {
+      logger.info("Server closed");
+      process.exit(0);
+    });
+  } else {
+    process.exit(0);
+  }
+};
 
-process.on("SIGINT", async () => {
-  console.log("Shutting down...");
-  const channel = getChannel();
-  await channel.close();
-  process.exit(0);
-});
+const unexpectedErrorHandler = (error: unknown) => {
+  logger.error("Unexpected error:", error);
+  exitHandler();
+};
+
+process.on("uncaughtException", unexpectedErrorHandler);
+process.on("unhandledRejection", unexpectedErrorHandler);
+
+process.on("SIGTERM", exitHandler);
+process.on("SIGINT", exitHandler);
+
+startServer();

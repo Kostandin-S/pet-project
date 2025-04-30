@@ -1,26 +1,15 @@
-import nodemailer from "nodemailer";
-import SMTPTransport from "nodemailer/lib/smtp-transport";
+import nodemailer from 'nodemailer';
+import SMTPTransport from 'nodemailer/lib/smtp-transport';
 
-import envVars from "../constants/env-vars";
-import errors from "../constants/errors";
-import { InternalServerError } from "../utils/errors";
-
-if (
-  !envVars.MAILTRAP_HOST ||
-  !envVars.MAILTRAP_PORT ||
-  !envVars.MAILTRAP_USER ||
-  !envVars.MAILTRAP_PASS
-) {
-  throw new InternalServerError(errors.ENV_VARS_MISSING);
-}
+import envVars from '../constants/env-vars';
 
 const transporter = nodemailer.createTransport({
-  host: process.env.MAILTRAP_HOST,
-  port: process.env.MAILTRAP_PORT,
+  host: envVars.MAILTRAP_HOST,
+  port: Number(envVars.MAILTRAP_PORT),
   secure: false,
   auth: {
-    user: process.env.MAILTRAP_USER,
-    pass: process.env.MAILTRAP_PASS,
+    user: envVars.MAILTRAP_USER,
+    pass: envVars.MAILTRAP_PASS,
   },
 } as SMTPTransport.Options);
 
@@ -29,13 +18,29 @@ export const sendBookRecommendationsEmail = async (
   genre: string,
   books: string[]
 ) => {
-  const bookList = books.map((book, idx) => `${idx + 1}. ${book}`).join("\n");
+  const bookListText = books
+    .map((book, idx) => `${idx + 1}. ${book}`)
+    .join("\n");
+
+  const bookListHTML = books
+    .map((book, idx) => `<li><strong>${idx + 1}.</strong> ${book}</li>`)
+    .join("");
 
   const mailOptions = {
-    from: "hello@demomailtrap.co",
+    from: '"BookMate" <hello@demomailtrap.co>',
     to,
     subject: `You've just finished a book! Here are more ${genre} recommendations`,
-    text: `Hi there!\n\nSince you just finished a ${genre} book, here are a few more you might love:\n\n${bookList}\n\nHappy reading!\n- The BookMate Team`,
+    text: `Hi there!\n\nSince you just finished a ${genre} book, here are a few more you might love:\n\n${bookListText}\n\nHappy reading!\n- The BookMate Team`,
+    html: `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+        <h2>Hi there!</h2>
+        <p>Since you just finished a <strong>${genre}</strong> book, here are a few more you might love:</p>
+        <ul>
+          ${bookListHTML}
+        </ul>
+        <p>Happy reading! 📚<br><strong>- The BookMate Team</strong></p>
+      </div>
+    `,
   };
 
   try {

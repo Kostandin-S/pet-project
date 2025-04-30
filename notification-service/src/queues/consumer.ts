@@ -1,6 +1,6 @@
-import { sendBookRecommendationsEmail } from "../helpers/mailer";
-import { getChannel } from "../messaging/rabbitmq";
-import { InternalServerError } from "../utils/errors";
+import { sendBookRecommendationsEmail } from '../helpers/mailer';
+import { getChannel } from '../messaging/rabbitmq';
+import { InternalServerError } from '../utils/errors';
 
 export const consumeBookRecommendations = async (queue: string) => {
   const channel = getChannel();
@@ -13,10 +13,10 @@ export const consumeBookRecommendations = async (queue: string) => {
 
     console.log("[Book Recommendations Consumer] Received:", data);
 
-    const { email, genres, books } = data;
+    const { email, genre, books } = data;
 
     try {
-      await sendBookRecommendationsEmail(email, genres, books);
+      await sendBookRecommendationsEmail(email, genre, books);
     } catch (error) {
       throw new InternalServerError(error);
     }

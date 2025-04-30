@@ -25,3 +25,9 @@ export type GenericError = {
   message: string;
   details: string;
 };
+
+export type FuncParams = {
+  genre?: string;
+  title?: string;
+  author?: string;
+};

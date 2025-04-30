@@ -1,4 +1,4 @@
-import errors from "../constants/errors";
+import { ErrorMessages } from "../constants/errors";
 import { UserBooks } from "../generated/prisma";
 import * as userBooksDal from "../repositories/user-books.dal";
 import { AddUserBookRequestBody } from "../user-books.types";
@@ -14,7 +14,7 @@ export const associateBookWithUser = async (
   });
 
   if (book) {
-    throw new Conflict(errors.BOOK_ALREADY_ASSIGNED);
+    throw new Conflict(ErrorMessages.BOOK_ALREADY_ASSIGNED);
   }
 
   await userBooksDal.addBookToUser({
@@ -36,7 +36,7 @@ export const checkIfBookIsPartOfUsersCollection = async (
     userId_bookId: { userId, bookId },
   });
 
-  if (!book) throw new NotFoundError(errors.BOOK_NOT_FOUND);
+  if (!book) throw new NotFoundError(ErrorMessages.BOOK_NOT_FOUND);
 
   return book;
 };

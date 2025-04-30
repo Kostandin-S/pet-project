@@ -4,7 +4,7 @@ import { PrismaClient } from "../src/generated/prisma/client";
 
 const prisma = new PrismaClient();
 
-dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
+dotenv.config({ path: `.env.${process.env.NODE_ENV || "dev"}` });
 
 async function main() {
   // --- Seed Genres ---

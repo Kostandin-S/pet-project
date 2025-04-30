@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from "axios";
 import { NextFunction, Request, Response } from "express";
 
 import envVars from "../constants/env-vars";
-import errors from "../constants/errors";
+import { ErrorMessages } from "../constants/errors";
 import { HttpMethod } from "../enums/http-methods";
 import { generateToken } from "../helpers/jwt.helper";
 import { NotAuthenticated } from "../utils/errors";
@@ -15,7 +15,7 @@ export const validateSession = async (
   const cookie = req.headers?.cookie;
 
   if (!cookie) {
-    next(new NotAuthenticated(errors.N0_SESSION_FOUND));
+    next(new NotAuthenticated(ErrorMessages.NO_SESSION_FOUND));
     return;
   }
 

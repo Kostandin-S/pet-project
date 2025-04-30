@@ -1,8 +1,12 @@
-import { NextFunction, Request, Response } from "express";
+import {
+  NextFunction,
+  Request,
+  Response,
+} from 'express';
 
-import errors from "../constants/errors";
-import { decodeToken } from "../helpers/jwt.helper";
-import { NotAuthenticated } from "../utils/errors";
+import { ErrorMessages } from '../constants/errors';
+import { decodeToken } from '../helpers/jwt.helper';
+import { NotAuthenticated } from '../utils/errors';
 
 const extractTokenFromHeader = (req: Request): string | undefined => {
   const authHeader = req.headers.authorization;
@@ -12,7 +16,7 @@ const extractTokenFromHeader = (req: Request): string | undefined => {
   return type.toLowerCase() !== "bearer" ? undefined : token;
 };
 
-export const internalAuthn = async (
+export const interServiceAuthn = async (
   req: Request,
   _: Response,
   next: NextFunction
@@ -20,7 +24,7 @@ export const internalAuthn = async (
   const token = extractTokenFromHeader(req);
 
   if (!token) {
-    next(new NotAuthenticated(errors.NO_TOKEN_PROVIDED));
+    next(new NotAuthenticated(ErrorMessages.NO_TOKEN_PROVIDED));
     return;
   }
 

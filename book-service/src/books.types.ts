@@ -1,4 +1,7 @@
-import { Book, Genre } from "./generated/prisma/client";
+import {
+  Book,
+  Genre,
+} from './generated/prisma/client';
 
 export type AddBookRequestBody = {
   title: string;
@@ -34,4 +37,12 @@ export type BookUpdatedMessage = {
   bookId: string;
   author: string;
   title: string;
+};
+
+export type BookDeleteMessage = {
+  bookId: string;
+};
+
+export type BookRecommendationsQueryParams = {
+  genre?: string;
 };
