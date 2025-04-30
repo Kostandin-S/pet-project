@@ -1,4 +1,4 @@
-name: CI/CD Dev - Full Microservices Pipeline
+name: Push Dev Docker Images
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - dev
 
 jobs:
-  build-and-deploy-dev:
+  build-and-push-dev:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,62 +19,32 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      ##################################
-      # 🔧 Build & Push Docker Images
-      ##################################
-
-      - name: Build & Push api-gateway
+      - name: Build & Push API Gateway
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/book-tracker-microservices-api-gateway:dev ./api-gateway
           docker push ${{ secrets.DOCKER_USERNAME }}/book-tracker-microservices-api-gateway:dev
 
-      - name: Build & Push auth-service
+      - name: Build & Push Auth Service
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/book-tracker-microservices-auth-service:dev ./auth-service
           docker push ${{ secrets.DOCKER_USERNAME }}/book-tracker-microservices-auth-service:dev
 
-      - name: Build & Push user-service
+      - name: Build & Push User Service
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/book-tracker-microservices-user-service:dev ./user-service
           docker push ${{ secrets.DOCKER_USERNAME }}/book-tracker-microservices-user-service:dev
 
-      - name: Build & Push book-service
+      - name: Build & Push Book Service
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/book-tracker-microservices-book-service:dev ./book-service
           docker push ${{ secrets.DOCKER_USERNAME }}/book-tracker-microservices-book-service:dev
 
-      - name: Build & Push user-books-service
+      - name: Build & Push User Books Service
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/book-tracker-microservices-user-books-service:dev ./user-books-service
           docker push ${{ secrets.DOCKER_USERNAME }}/book-tracker-microservices-user-books-service:dev
 
-      - name: Build & Push notification-service
+      - name: Build & Push Notification Service
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/book-tracker-microservices-notification-service:dev ./notification-service
           docker push ${{ secrets.DOCKER_USERNAME }}/book-tracker-microservices-notification-service:dev
-
-      ##################################
-      # ⚙️ Deploy to Kubernetes
-      ##################################
-
-      - name: Set up Kubeconfig
-        run: |
-          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > $HOME/.kube/config
-
-      - name: Deploy api-gateway to dev
-        run: kubectl apply -f k8s/api-gateway/deployment-dev.yaml
-
-      - name: Deploy auth-service to dev
-        run: kubectl apply -f k8s/auth-service/deployment-dev.yaml
-
-      - name: Deploy user-service to dev
-        run: kubectl apply -f k8s/user-service/deployment-dev.yaml
-
-      - name: Deploy book-service to dev
-        run: kubectl apply -f k8s/book-service/deployment-dev.yaml
-
-      - name: Deploy user-books-service to dev
-        run: kubectl apply -f k8s/user-books-service/deployment-dev.yaml
-
-      - name: Deploy notification-service to dev
-        run: kubectl apply -f k8s/notification-service/deployment-dev.yaml
