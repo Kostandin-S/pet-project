@@ -1,26 +1,26 @@
-import logger from './config/logger';
-import envVars from './constants/env-vars';
-import { BookStatus } from './generated/prisma';
+import logger from "./config/logger";
+import envVars from "./constants/env-vars";
+import { BookStatus } from "./generated/prisma";
 import {
   associateBookWithUser,
   checkIfBookIsPartOfUsersCollection,
   formatUserBooks,
-} from './helpers/user-books.helpers';
-import { publishBookRecommendations } from './queues/publisher';
-import * as userBooksDal from './repositories/user-books.dal';
+} from "./helpers/user-books.helpers";
+import { publishBookRecommendations } from "./queues/publisher";
+import * as userBooksDal from "./repositories/user-books.dal";
 import {
   getBooks,
   getBookById,
   getBookRecommendations,
-} from './requests/book-service/requests';
+} from "./requests/book-service/requests";
 import {
   AddUserBookRequestBody,
   UpdateUserBookRequestBody,
-} from './user-books.types';
+} from "./user-books.types";
 import {
   validateAddUserBookRequestBook,
   validateUpdateUserBookRequestBook,
-} from './user-books.validator';
+} from "./user-books.validator";
 
 export const addUserBook = async (
   requestBody: AddUserBookRequestBody,
@@ -94,7 +94,7 @@ export const updateUserBook = async (
       genre: bookGenres[0],
     });
 
-    if (booksRecommendations.length) {
+    if (booksRecommendations?.length) {
       const message = {
         email: userEmail,
         genre: bookGenres[0],

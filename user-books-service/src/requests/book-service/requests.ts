@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 
+import logger from "../../config/logger";
 import envVars from "../../constants/env-vars";
 import { HttpMethod } from "../../enums/http-methods";
 import { internalErrorHandlers } from "../../helpers/internal-errors-handler";
@@ -75,6 +76,6 @@ export const getBookRecommendations = async (
     const errorData = error as AxiosError<GenericError>;
     const errorResponse: AxiosResponse<GenericError> | undefined =
       errorData.response;
-    throw internalErrorHandlers(errorResponse);
+    logger.error("Error fetching book recommendations", errorResponse);
   }
 };
