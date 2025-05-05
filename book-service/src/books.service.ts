@@ -2,12 +2,12 @@ import {
   AddBookRequestBody,
   GetBookFilters,
   UpdateBookRequestBody,
-} from './books.types';
+} from "./books.types";
 import {
   validateAddBookRequestBody,
   validateUpdateBookRequestBody,
-} from './books.validator';
-import logger from './config/logger';
+} from "./books.validator";
+import logger from "./config/logger";
 import {
   addNewBookToCollection,
   checkIfBookExistsById,
@@ -16,8 +16,8 @@ import {
   prepareBooksFilters,
   searchForBookInGoogleBooks,
   AddNewBookToCollectionParams,
-} from './helpers/books.helpers';
-import * as dal from './repositories/books.dal';
+} from "./helpers/books.helpers";
+import * as dal from "./repositories/books.dal";
 
 export const addBook = async (reqBody: AddBookRequestBody) => {
   logger.info("Received request to add a new book", {
@@ -77,10 +77,7 @@ export const getBooks = async (filters: GetBookFilters) => {
   }
 
   return books.map((book) => {
-    logger.info("Returning formatted book", {
-      bookId: book.id,
-      title: book.title,
-    });
+    logger.info(`Returning formatted book: ${book.id} - ${book.title}`);
     return formatBookGenresObject(book);
   });
 };

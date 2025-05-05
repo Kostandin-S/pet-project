@@ -1,13 +1,10 @@
-import axios, {
-  AxiosError,
-  AxiosResponse,
-} from 'axios';
+import axios, { AxiosError, AxiosResponse } from "axios";
 
-import envVars from '../../constants/env-vars';
-import { HttpMethod } from '../../enums/http-methods';
-import { internalErrorHandlers } from '../../helpers/internal-errors-handler';
-import { generateToken } from '../../helpers/jwt.helper';
-import { prepareQueryParamsForGetBook } from './helper';
+import envVars from "../../constants/env-vars";
+import { HttpMethod } from "../../enums/http-methods";
+import { internalErrorHandlers } from "../../helpers/internal-errors-handler";
+import { generateToken } from "../../helpers/jwt.helper";
+import { prepareQueryParamsForGetBook } from "./helper";
 import {
   Book,
   GenericError,
@@ -15,7 +12,7 @@ import {
   GetBookParams,
   GetBookRecommendationsParams,
   GetBookRecommendationsResponse,
-} from './types';
+} from "./types";
 
 export const getBooks = async (params: GetBookParams) => {
   const queryParams = prepareQueryParamsForGetBook(params);
